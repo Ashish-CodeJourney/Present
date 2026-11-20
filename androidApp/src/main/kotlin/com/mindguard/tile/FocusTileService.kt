@@ -1,8 +1,11 @@
 package com.mindguard.tile
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import com.mindguard.MainActivity
 import com.mindguard.shared.usecases.isPausedAt
 import com.mindguard.storage.SettingsDataStore
 import kotlinx.coroutines.CoroutineScope
@@ -36,14 +39,29 @@ class FocusTileService : TileService(), KoinComponent {
         listenJob = null
     }
 
+    // Resuming is instant; switching off opens the turn-off guard (countdown + real-world quest).
     override fun onClick() {
         serviceScope.launch {
             val pauseUntil = settingsDataStore.pauseUntilFlow.first()
             if (isPausedAt(pauseUntil, System.currentTimeMillis())) {
                 settingsDataStore.resumeFromPause()
             } else {
-                settingsDataStore.pauseProtection(PAUSE_DURATION_MS)
+                withContext(Dispatchers.Main) { openTurnOffGuard() }
             }
+        }
+    }
+
+    private fun openTurnOffGuard() {
+        val intent = Intent(this, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putExtra(MainActivity.EXTRA_OPEN_TURN_OFF_GUARD, true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startActivityAndCollapse(
+                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            startActivityAndCollapse(intent)
         }
     }
 
@@ -58,12 +76,8 @@ class FocusTileService : TileService(), KoinComponent {
         tile.state = if (isPaused) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
         tile.label = if (isPaused) "Focus Paused" else "Focus Mode"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            tile.subtitle = if (isPaused) "Tap to resume" else "Tap to pause 30m"
+            tile.subtitle = if (isPaused) "Tap to resume" else "Tap to take a break"
         }
         tile.updateTile()
-    }
-
-    companion object {
-        const val PAUSE_DURATION_MS = 30 * 60 * 1000L
     }
 }

@@ -8,6 +8,7 @@ import com.mindguard.shared.policy.PresentPolicy
 import com.mindguard.storage.PolicyStore
 import com.mindguard.storage.SettingsDataStore
 import com.mindguard.ui.present.CompileUiState
+import com.mindguard.ui.present.GUARD_PAUSE_DURATION_MS
 import com.mindguard.ui.present.InsightsLoader
 import com.mindguard.ui.present.InsightsUiState
 import com.mindguard.ui.present.IntentCompiler
@@ -95,12 +96,35 @@ class MainViewModel(
     val snapchatBlocks: StateFlow<Long> = store.snapchatBlocksFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0L)
 
+    val turnOffsToday: StateFlow<Long> = store.turnOffsTodayFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0L)
+    val questsAccepted: StateFlow<Long> = store.questsAcceptedFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0L)
+
     init {
         viewModelScope.launch { store.resetDailyCountsIfNeeded() }
     }
 
     fun toggleProtection(enabled: Boolean) {
         viewModelScope.launch { store.setProtectionEnabled(enabled) }
+    }
+
+    fun turnOffFromGuard() {
+        viewModelScope.launch {
+            store.recordTurnOff()
+            store.setProtectionEnabled(false)
+        }
+    }
+
+    fun pauseFromGuard() {
+        viewModelScope.launch {
+            store.recordTurnOff()
+            store.pauseProtection(GUARD_PAUSE_DURATION_MS)
+        }
+    }
+
+    fun acceptQuest() {
+        viewModelScope.launch { store.recordQuestAccepted() }
     }
 
     fun completeOnboarding() {

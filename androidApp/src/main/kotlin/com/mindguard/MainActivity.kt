@@ -16,7 +16,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import kotlinx.coroutines.delay
 import com.mindguard.ui.present.CompileUiState
+import com.mindguard.ui.present.QuestAction
+import com.mindguard.ui.present.SocialQuest
 import com.mindguard.ui.present.pauseCountdownSeconds
+import com.mindguard.ui.present.requiresTurnOffGuard
+import com.mindguard.ui.present.turnOffCountdownSeconds
 import com.mindguard.ui.screens.HomeScreen
 import com.mindguard.ui.screens.IntentScreen
 import com.mindguard.ui.screens.PauseCardScreen
@@ -25,16 +29,26 @@ import com.mindguard.ui.screens.OnboardingScreen
 import com.mindguard.ui.screens.PermissionsScreen
 import com.mindguard.ui.screens.SettingsScreen
 import com.mindguard.ui.screens.StatsScreen
+import com.mindguard.ui.screens.TurnOffGuardScreen
 import com.mindguard.ui.theme.MindGuardTheme
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
+    companion object {
+        const val EXTRA_OPEN_TURN_OFF_GUARD = "com.mindguard.OPEN_TURN_OFF_GUARD"
+    }
+
+    private var turnOffGuardRequests by mutableIntStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) handleLaunchIntent(intent)
         setContent {
             MindGuardTheme {
                 MindGuardApp(
+                    turnOffGuardRequests = turnOffGuardRequests,
+                    onStartQuest = ::startQuest,
                     checkAccessibilityEnabled = { isAccessibilityServiceEnabled() },
                     needsRestrictedSettingsStep = needsRestrictedSettingsStep(),
                     onOpenAccessibilitySettings = {
@@ -49,6 +63,29 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleLaunchIntent(intent)
+    }
+
+    private fun handleLaunchIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(EXTRA_OPEN_TURN_OFF_GUARD, false) == true) turnOffGuardRequests += 1
+    }
+
+    private fun startQuest(quest: SocialQuest) {
+        val questIntent = when (quest.action) {
+            QuestAction.DIAL    -> Intent(Intent.ACTION_DIAL)
+            QuestAction.MESSAGE -> Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"))
+                .putExtra("sms_body", "Hey! Free for a chai or coffee later? ☕")
+            QuestAction.NONE    -> return
+        }
+        try {
+            startActivity(questIntent)
+        } catch (e: android.content.ActivityNotFoundException) {
+            android.util.Log.w("Present", "No app for quest ${quest.action}")
         }
     }
 
@@ -75,10 +112,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { ONBOARDING, PERMISSIONS, HOME, STATS, SETTINGS, INTENT, REVIEW, PAUSE }
+private enum class Screen { ONBOARDING, PERMISSIONS, HOME, STATS, SETTINGS, INTENT, REVIEW, PAUSE, TURN_OFF_GUARD }
 
 @Composable
 fun MindGuardApp(
+    turnOffGuardRequests: Int,
+    onStartQuest: (SocialQuest) -> Unit,
     checkAccessibilityEnabled: () -> Boolean,
     needsRestrictedSettingsStep: Boolean,
     onOpenAccessibilitySettings: () -> Unit,
@@ -109,6 +148,8 @@ fun MindGuardApp(
     val compileState        by viewModel.compileState.collectAsState()
     val draftPrompt         by viewModel.draftPrompt.collectAsState()
     val insightsState       by viewModel.insightsState.collectAsState()
+    val turnOffsToday       by viewModel.turnOffsToday.collectAsState()
+    val questsAccepted      by viewModel.questsAccepted.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     var accessibilityEnabled by remember { mutableStateOf(checkAccessibilityEnabled()) }
@@ -139,6 +180,15 @@ fun MindGuardApp(
         mutableStateOf(startScreen)
     }
 
+    // Quick Settings tile asks to switch off: route through the guard instead of pausing silently.
+    var handledGuardRequests by remember { mutableIntStateOf(0) }
+    LaunchedEffect(turnOffGuardRequests, startScreen) {
+        if (turnOffGuardRequests > handledGuardRequests && startScreen == Screen.HOME) {
+            handledGuardRequests = turnOffGuardRequests
+            currentScreen = Screen.TURN_OFF_GUARD
+        }
+    }
+
     when (currentScreen) {
         Screen.ONBOARDING -> OnboardingScreen(
             onContinue = {
@@ -159,7 +209,10 @@ fun MindGuardApp(
             attemptCount       = attemptCountToday,
             currentStreak      = currentStreak,
             pauseUntilMs       = pauseUntil,
-            onToggleProtection = viewModel::toggleProtection,
+            onToggleProtection = { requested ->
+                if (requiresTurnOffGuard(protectionEnabled, requested)) currentScreen = Screen.TURN_OFF_GUARD
+                else viewModel.toggleProtection(requested)
+            },
             onResumeFromPause  = viewModel::resumeFromPause,
             onViewStats        = { currentScreen = Screen.STATS },
             onOpenSettings     = { currentScreen = Screen.SETTINGS },
@@ -212,6 +265,31 @@ fun MindGuardApp(
                     currentScreen = Screen.HOME
                 },
                 onDismiss = { currentScreen = Screen.HOME }
+            )
+        }
+        Screen.TURN_OFF_GUARD -> {
+            val keepOn = {
+                viewModel.acceptQuest()
+                currentScreen = Screen.HOME
+            }
+            BackHandler { currentScreen = Screen.HOME }
+            TurnOffGuardScreen(
+                countdownSeconds = turnOffCountdownSeconds(turnOffsToday),
+                turnOffsToday    = turnOffsToday,
+                questsAccepted   = questsAccepted,
+                onKeepOn         = keepOn,
+                onStartQuest     = { quest ->
+                    keepOn()
+                    onStartQuest(quest)
+                },
+                onPauseInstead   = {
+                    viewModel.pauseFromGuard()
+                    currentScreen = Screen.HOME
+                },
+                onTurnOff        = {
+                    viewModel.turnOffFromGuard()
+                    currentScreen = Screen.HOME
+                }
             )
         }
         Screen.STATS -> {

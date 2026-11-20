@@ -55,6 +55,10 @@ class SettingsDataStore(private val context: Context) {
         private val TIKTOK_BLOCKS         = longPreferencesKey("tiktok_blocks")
         private val SNAPCHAT_BLOCKS       = longPreferencesKey("snapchat_blocks")
 
+        // Turn-off guard: turn-offs today escalate the countdown; quests accepted is all-time
+        private val TURN_OFFS_TODAY       = longPreferencesKey("turn_offs_today")
+        private val QUESTS_ACCEPTED       = longPreferencesKey("quests_accepted")
+
         // Pause-until epoch millis (0 = not paused)
         private val PAUSE_UNTIL_MS        = longPreferencesKey("pause_until_ms")
 
@@ -97,6 +101,10 @@ class SettingsDataStore(private val context: Context) {
     val youtubeBlocksFlow:   Flow<Long> = context.dataStore.data.map { it[YOUTUBE_BLOCKS]   ?: 0L }
     val tiktokBlocksFlow:    Flow<Long> = context.dataStore.data.map { it[TIKTOK_BLOCKS]    ?: 0L }
     val snapchatBlocksFlow:  Flow<Long> = context.dataStore.data.map { it[SNAPCHAT_BLOCKS]  ?: 0L }
+
+    // ── Turn-off guard flows ─────────────────────────────────────────────────
+    val turnOffsTodayFlow: Flow<Long>  = context.dataStore.data.map { it[TURN_OFFS_TODAY] ?: 0L }
+    val questsAcceptedFlow: Flow<Long> = context.dataStore.data.map { it[QUESTS_ACCEPTED] ?: 0L }
 
     // ── Pause-until flow ─────────────────────────────────────────────────────
     val pauseUntilFlow: Flow<Long> = context.dataStore.data.map { it[PAUSE_UNTIL_MS] ?: 0L }
@@ -158,6 +166,14 @@ class SettingsDataStore(private val context: Context) {
         }
     }
 
+    suspend fun recordTurnOff() {
+        context.dataStore.edit { it[TURN_OFFS_TODAY] = (it[TURN_OFFS_TODAY] ?: 0L) + 1 }
+    }
+
+    suspend fun recordQuestAccepted() {
+        context.dataStore.edit { it[QUESTS_ACCEPTED] = (it[QUESTS_ACCEPTED] ?: 0L) + 1 }
+    }
+
     suspend fun recordAttempt() {
         context.dataStore.edit {
             it[ATTEMPT_COUNT_TODAY] = (it[ATTEMPT_COUNT_TODAY] ?: 0L) + 1
@@ -198,6 +214,7 @@ class SettingsDataStore(private val context: Context) {
         context.dataStore.edit {
             it[BLOCK_COUNT_TODAY]   = 0L
             it[ATTEMPT_COUNT_TODAY] = 0L
+            it[TURN_OFFS_TODAY]     = 0L
             it[LAST_RESET_DAY]      = todayEpochDay
             it[CURRENT_STREAK]      = newStreak
             it[BEST_STREAK]         = newBest
