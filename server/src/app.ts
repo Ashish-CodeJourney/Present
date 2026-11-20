@@ -14,7 +14,7 @@ const CompileRequestSchema = z.object({
 export const createApp = (deps: { readonly generate: GenerateJson; readonly apiKey: string }) => {
   const app = new Hono();
 
-  app.get("/healthz", (c) => c.json({ status: "ok" }));
+  app.get("/health", (c) => c.json({ status: "ok" }));
 
   app.use(
     "/v1/*",

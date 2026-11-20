@@ -144,11 +144,11 @@ describe("POST /v1/compile", () => {
   });
 });
 
-describe("GET /healthz", () => {
+describe("GET /health", () => {
   it("reports the service is up without needing the API key", async () => {
     const { generate } = fakeGemini({});
 
-    const response = await createApp({ generate, apiKey: API_KEY }).request("/healthz");
+    const response = await createApp({ generate, apiKey: API_KEY }).request("/health");
 
     expect(response.status).toBe(200);
   });

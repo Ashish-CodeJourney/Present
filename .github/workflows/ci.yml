@@ -33,7 +33,11 @@ jobs:
           cache: gradle
 
       - name: Write local.properties
-        run: echo "sdk.dir=$ANDROID_HOME" >> local.properties
+        env:
+          PRESENT_API_KEY: ${{ secrets.PRESENT_API_KEY }}
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          if [ -n "$PRESENT_API_KEY" ]; then echo "present.apiKey=$PRESENT_API_KEY" >> local.properties; fi
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew

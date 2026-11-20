@@ -41,7 +41,7 @@ val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
-val presentApiUrl: String = localProperties.getProperty("present.apiUrl") ?: "http://localhost:8080"
+val presentApiUrl: String = localProperties.getProperty("present.apiUrl") ?: "https://present-compiler-283760043967.asia-south1.run.app"
 val presentApiKey: String = localProperties.getProperty("present.apiKey") ?: "dev-key"
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
