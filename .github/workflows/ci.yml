@@ -156,7 +156,11 @@ jobs:
           cache: gradle
 
       - name: Write local.properties
-        run: echo "sdk.dir=$ANDROID_HOME" >> local.properties
+        env:
+          PRESENT_API_KEY: ${{ secrets.PRESENT_API_KEY }}
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          if [ -n "$PRESENT_API_KEY" ]; then echo "present.apiKey=$PRESENT_API_KEY" >> local.properties; fi
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
@@ -184,17 +188,18 @@ jobs:
       - name: Rename APK for release
         run: |
           mkdir -p release-assets
-          cp androidApp/build/outputs/apk/release/*.apk "release-assets/MindGuard-${GITHUB_REF_NAME}.apk"
+          cp androidApp/build/outputs/apk/release/*.apk "release-assets/Present-${GITHUB_REF_NAME}.apk"
 
       - name: Upload release APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mindguard-release-apk
+          name: present-release-apk
           path: release-assets/*.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          name: Present ${{ github.ref_name }}
           files: release-assets/*.apk
           generate_release_notes: true
         env:

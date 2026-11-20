@@ -1,288 +1,715 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MindGuard — Stop the scroll before it stops you</title>
-<meta name="description" content="MindGuard blocks Instagram Reels, YouTube Shorts, TikTok, and Snapchat Spotlight the instant they open. 100% on-device. No accounts, no servers, no tracking." />
-<link rel="icon" type="image/svg+xml" href="favicon.svg" />
-<link rel="icon" type="image/png" href="favicon.png" />
-<link rel="canonical" href="https://mindguard.eu.org/" />
-<meta name="theme-color" content="#0B0B10" />
-<!-- Open Graph -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://mindguard.eu.org/" />
-<meta property="og:title" content="MindGuard — Stop the scroll before it stops you" />
-<meta property="og:description" content="Blocks Instagram Reels, YouTube Shorts, TikTok, and Snapchat Spotlight the instant they open. 100% on-device. No accounts, no servers, no tracking." />
-<meta property="og:image" content="https://mindguard.eu.org/og-image.png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:site_name" content="MindGuard" />
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="MindGuard — Stop the scroll before it stops you" />
-<meta name="twitter:description" content="Blocks Instagram Reels, YouTube Shorts, TikTok, and Snapchat Spotlight the instant they open. 100% on-device. No accounts, no servers, no tracking." />
-<meta name="twitter:image" content="https://mindguard.eu.org/og-image.png" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Present: Keep the people. Lose the feed.</title>
+<meta name="description" content="Present is a cognitive firewall for Android and Chrome. Say what you want in plain words, Gemini compiles it into rules, and your phone removes Reels and Shorts in about 100 ms while DMs, search and subscriptions keep working.">
+<meta name="theme-color" content="#0F0C29">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<link rel="canonical" href="https://ashish-codejourney.github.io/Present/">
+<!-- Social cards need absolute URLs. Update these lines if the repository is renamed again. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Present">
+<meta property="og:title" content="Present: Keep the people. Lose the feed.">
+<meta property="og:description" content="Say what you want from your phone. Gemini turns it into rules. Reels and Shorts go; DMs, search and subscriptions stay. By Team Hello Human.">
+<meta property="og:url" content="https://ashish-codejourney.github.io/Present/">
+<meta property="og:image" content="https://ashish-codejourney.github.io/Present/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Present logo, a sun rising over the horizon, with the line: Keep the people. Lose the feed.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Present: Keep the people. Lose the feed.">
+<meta name="twitter:description" content="A cognitive firewall for Android and Chrome, compiled by Gemini, enforced on-device in about 100 ms.">
+<meta name="twitter:image" content="https://ashish-codejourney.github.io/Present/og-image.png">
+<meta name="twitter:image:alt" content="Present logo, a sun rising over the horizon, with the line: Keep the people. Lose the feed.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="script.js" defer></script>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<nav>
-  <a class="nav-logo" href="#">
-    <svg width="28" height="28" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="108" height="108" rx="24" fill="url(#ng)"/>
-      <path d="M54 14L22 28V58C22 78 36 92 54 96C72 92 86 78 86 58V28Z" fill="white"/>
-      <path d="M30 56L40 56L45 40L54 72L59 46L64 56L78 56" stroke="#4A1970" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <defs>
-        <linearGradient id="ng" x1="0" y1="0" x2="108" y2="108" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF3B5C"/><stop offset="1" stop-color="#4A1970"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    MindGuard
-  </a>
-  <a class="nav-cta" href="https://github.com/Ashish-CodeJourney/MindGuard/releases/latest" target="_blank" rel="noopener">Install APK</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-noise"></div>
-  <div class="hero-ghost-feed" aria-hidden="true">
-    <div></div><div></div><div></div><div></div><div></div><div></div>
+<header class="site-header" id="siteHeader">
+  <div class="container site-header__inner">
+    <a class="brand" href="#top" aria-label="Present, back to top">
+      <img src="assets/logo.svg" alt="" width="36" height="36">
+      <span>Present</span>
+    </a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#calculator">Your number</a>
+      <a href="#how">How it works</a>
+      <a href="#screens">The app</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#google">Built with Google</a>
+    </nav>
+    <a class="btn btn--primary btn--sm" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the app</a>
   </div>
-  <div class="hero-content">
-    <span class="eyebrow">Open source · On-device · Free</span>
-    <div class="glitch-wrap">
-      <h1 class="headline" id="glitch-headline">
-        <span class="clean">Stop the scroll before it stops you.</span>
-      </h1>
-    </div>
-    <p class="sub">MindGuard watches Instagram, YouTube, TikTok, and Snapchat for the instant a short-video player opens — and closes the door before you fall in. Nothing leaves your phone.</p>
-    <div class="hero-actions">
-      <a class="btn btn-fill" href="https://github.com/Ashish-CodeJourney/MindGuard/releases/latest" target="_blank" rel="noopener">Install the APK</a>
-      <a class="btn btn-ghost" href="#interrupt">Watch it block a Reel ↓</a>
-    </div>
-  </div>
-</section>
+</header>
 
-<!-- INTERRUPTION SCROLLYTELLING -->
-<section class="interrupt" id="interrupt">
-  <div class="interrupt-grid">
-    <div class="phone-sticky">
-      <div class="phone" id="phone">
-        <div class="phone-notch"></div>
-        <div class="phone-feed">
-          <div></div><div></div><div></div><div></div>
+<main id="main">
+
+<!-- 1. HERO -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero__sky" aria-hidden="true">
+    <canvas class="hero__stars" id="stars"></canvas>
+    <div class="hero__warm"></div>
+    <div class="hero__sunwrap">
+      <div class="hero__sun">
+        <div class="hero__glow"></div>
+        <div class="hero__rays"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="hero__disc"></div>
+      </div>
+    </div>
+    <div class="hero__horizon"></div>
+  </div>
+
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow"><span class="dot"></span> Google Startup Buildathon · Team Hello Human</p>
+      <h1 id="hero-title">Keep the people.<br><span class="grad">Lose the feed.</span></h1>
+      <p class="lede">Present is a precision cognitive firewall for Android and Chrome. Say what you want in plain words. <strong>Gemini</strong> turns it into rules, and your phone quietly closes Reels and Shorts in about 100&nbsp;ms. Your DMs, search and subscriptions keep working.</p>
+      <div class="cta-row">
+        <a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the Android app</a>
+        <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
+      </div>
+      <ul class="hero__facts">
+        <li><b>Gemini</b> on Cloud Run</li>
+        <li><b>~100 ms</b> on-device</li>
+        <li><b>0</b> screen data sent</li>
+      </ul>
+    </div>
+
+    <figure class="hero__phone">
+      <div class="phone" role="img" aria-label="The Present app welcome screen: a phone shows a DM from Dhruvi, then Reels start auto-scrolling while a timer climbs to 40 minutes. Text: You opened Instagram for one message. 40 minutes later…">
+        <div class="phone__screen scr-night welcome" id="welcomeDemo" data-video="media/onboarding-welcome.mp4">
+          <div class="scr-stars"></div>
+          <div class="mini-phone">
+            <div class="mini-phone__dm">
+              <span class="mini-phone__from">💬 Dhruvi</span>
+              <span class="bubble">did you see this? 😂</span>
+            </div>
+            <div class="mini-phone__reels">
+              <div class="reel-strip">
+                <div class="reel r1">🚗</div><div class="reel r2">🐶</div><div class="reel r3">🍜</div><div class="reel r4">💅</div><div class="reel r5">🎮</div><div class="reel r1">🚗</div>
+              </div>
+              <span class="timer-chip">⏱ <b id="welcomeTimer">1</b> min</span>
+            </div>
+          </div>
+          <p class="welcome__h">You opened Instagram for one message.</p>
+          <p class="welcome__accent">40 minutes later…</p>
+          <p class="welcome__sub">Let's see where your time really goes. 60 seconds.</p>
+          <span class="scr-btn scr-btn--sun welcome__btn">Show me</span>
         </div>
-        <div class="phone-flash"></div>
-        <div class="phone-home"><img src="screenshots/home-screen.png" alt="MindGuard home screen" /></div>
       </div>
+      <figcaption class="sr-only">Recreation of the onboarding welcome screen in the Present Android app.</figcaption>
+    </figure>
+  </div>
+  <a class="hero__scroll" href="#trap"><span>Scroll to watch the sun rise</span><span class="hero__chev" aria-hidden="true">↓</span></a>
+</section>
+
+<!-- 2. THE TRAP -->
+<section class="trap section" id="trap" aria-labelledby="trap-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">The trap</p>
+      <h2 id="trap-title">One message. Forty minutes.</h2>
+      <p>You know this story. It isn't a willpower problem. The feed is built to do it.</p>
+    </header>
+    <div class="scrolly">
+      <div class="scrolly__stage">
+        <div class="phone phone--trap" data-state="dm" id="trapPhone" role="img" aria-label="An illustrated phone that changes as you read: a DM, then auto-scrolling Reels, then a clock reaching 40 minutes, then a blocker that locks the whole app.">
+          <div class="phone__screen trap-screen">
+            <div class="ts ts--dm">
+              <div class="ig-head"><span class="avatar">R</span><b>Dhruvi.k</b><span class="muted">Active now</span></div>
+              <div class="ig-thread">
+                <span class="bubble bubble--in">did you see this? 😂</span>
+                <span class="share-card"><span class="share-card__thumb">🚗</span><span>Reel · @drivewaydaily</span></span>
+                <span class="bubble bubble--out">opening it now</span>
+              </div>
+              <div class="ig-input">Message…</div>
+            </div>
+            <div class="ts ts--reels">
+              <div class="reel-strip reel-strip--fast">
+                <div class="reel r1">🚗</div><div class="reel r2">🐶</div><div class="reel r3">🍜</div><div class="reel r4">💅</div><div class="reel r5">🎮</div><div class="reel r6">🏋️</div><div class="reel r1">🚗</div>
+              </div>
+              <span class="reel-ui">♥ 12.4k<br>💬 318<br>↗</span>
+            </div>
+            <div class="ts ts--clock">
+              <div class="clock-wrap">
+                <svg class="clock" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="clock__track"/><circle cx="60" cy="60" r="52" class="clock__fill" id="trapClockRing" pathLength="100"/></svg>
+                <p class="clock__num"><span id="trapClock">0:00</span></p>
+              </div>
+              <p class="clock__label">minutes since you opened one DM</p>
+            </div>
+            <div class="ts ts--block">
+              <div class="lock">🔒</div>
+              <p class="lock__title">Instagram is blocked</p>
+              <p class="lock__sub">Your DMs are locked too.</p>
+              <span class="lock__btn">Unblock for 1 minute</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ol class="scrolly__steps">
+        <li class="step" data-step="dm">
+          <p class="step__time">9:41 PM</p>
+          <h3>Dhruvi sends you a Reel.</h3>
+          <p>You open Instagram to reply. One message, ten seconds, done. That's the plan.</p>
+        </li>
+        <li class="step" data-step="reels">
+          <p class="step__time">9:42 PM</p>
+          <h3>Then the feed takes over.</h3>
+          <p>Reels autoplay. Every swipe is a little slot-machine pull, because you never know if the next one is the good one.</p>
+        </li>
+        <li class="step" data-step="clock">
+          <p class="step__time">10:21 PM</p>
+          <h3>40 minutes later…</h3>
+          <p>You're watching a stranger power-wash a driveway. You still haven't replied to Dhruvi.</p>
+        </li>
+        <li class="step" data-step="block">
+          <p class="step__time">The next day</p>
+          <h3>So you install a blocker. It blocks everything.</h3>
+          <p>Lock the whole app and you lose the DM too. You unblock it "just for a minute", and the block is dead.</p>
+          <p class="stat"><span class="stat__num">87%</span> of users bypass or uninstall blunt app blockers within the first week.<sup><a href="#note-87" id="ref-87" aria-label="Note about this figure">*</a></sup></p>
+          <p class="step__turn">Present takes a different path: <b class="mint">keep the DM</b>, <b class="coral">lose the Reel</b>.</p>
+        </li>
+      </ol>
     </div>
-    <div class="interrupt-steps">
-      <div class="i-step" data-step="0">
-        <span class="tag">01 · Watch</span>
-        <h3>You open Instagram.</h3>
-        <p>MindGuard is already watching — reading on-screen element IDs for the four apps you've chosen to guard. Nothing else, nothing more.</p>
-      </div>
-      <div class="i-step" data-step="1">
-        <span class="tag">02 · Detect</span>
-        <h3>You tap into Reels.</h3>
-        <p>In milliseconds, MindGuard recognizes the short-video player by its screen signature — the same way a screen reader would, just looking for one thing.</p>
-      </div>
-      <div class="i-step" data-step="2">
-        <span class="tag">03 · Block</span>
-        <h3>It steps in before the clip loads.</h3>
-        <p>One Android Accessibility action — a back navigation, nothing more invasive. No permission to read messages, camera, or contacts is ever requested.</p>
-        <div class="i-readout"><span>median response</span> ~0.1s &nbsp; <span>network requests</span> 0</div>
-      </div>
-      <div class="i-step" data-step="3">
-        <span class="tag">04 · Continue</span>
-        <h3>You land back on your feed.</h3>
-        <p>Not a closed app. Not a locked screen. Just your Home feed, exactly where you left it — minus the trap.</p>
+    <p class="footnote" id="note-87">* The 87% figure comes from the Hello Human product brief (PRD). It is a framing estimate, not a peer-reviewed result. The studies we rely on for our maths are in <a href="#research">The research</a>.</p>
+  </div>
+</section>
+
+<!-- 3. CALCULATOR -->
+<section class="calc section" id="calculator" aria-labelledby="calc-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">Your number</p>
+      <h2 id="calc-title">Where does your time really go?</h2>
+      <p>This is the first minute of Present's onboarding. Answer honestly; a rough guess is fine. Nothing leaves this page.</p>
+    </header>
+
+    <div class="calc__grid">
+      <form class="calc__form card-night reveal" id="calcForm" aria-label="Your screen time">
+        <fieldset class="q">
+          <legend><span class="q__n">1</span> Which apps pull you in?</legend>
+          <p class="q__hint">Pick every one that eats your time.</p>
+          <div class="chips" data-group="apps" data-mode="multi">
+            <button type="button" class="chip" aria-pressed="true" data-value="INSTAGRAM">📸 Instagram</button>
+            <button type="button" class="chip" aria-pressed="true" data-value="YOUTUBE">▶️ YouTube</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="SNAPCHAT">👻 Snapchat</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="TIKTOK">🎵 TikTok</button>
+          </div>
+        </fieldset>
+
+        <div class="q">
+          <label class="q__legend" for="minutes"><span class="q__n">2</span> On a normal day, how long are you on them?</label>
+          <div class="slider">
+            <span class="slider__emoji" id="minutesEmoji" aria-hidden="true">😟</span>
+            <output class="slider__out" id="minutesOut" for="minutes">1 h 30 m</output>
+            <input type="range" id="minutes" min="0" max="10" step="1" value="4" aria-valuetext="1 h 30 m">
+            <div class="slider__scale" aria-hidden="true"><span>15 m</span><span>6 h+</span></div>
+          </div>
+        </div>
+
+        <fieldset class="q">
+          <legend><span class="q__n">3</span> How much of that is Reels / Shorts?</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="share" value="ALMOST_ALL"><span>Almost all of it</span></label>
+            <label class="opt"><input type="radio" name="share" value="ABOUT_HALF"><span>About half</span></label>
+            <label class="opt"><input type="radio" name="share" value="A_LITTLE"><span>A little</span></label>
+            <label class="opt"><input type="radio" name="share" value="NOT_SURE" checked><span>Not sure</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend><span class="q__n">4</span> When does it hit hardest? <span class="q__opt">optional</span></legend>
+          <div class="chips" data-group="time" data-mode="single">
+            <button type="button" class="chip" aria-pressed="false" data-value="MORNING">🌅 Morning, in bed</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="WORK_HOURS">💻 During study / work</button>
+            <button type="button" class="chip" aria-pressed="true" data-value="LATE_NIGHT">🌙 Late at night</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="ALL_DAY">🔁 All day, honestly</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend><span class="q__n">5</span> How old are you? <span class="q__opt">optional</span></legend>
+          <p class="q__hint">It makes the lifetime estimate honest. Skip it and we assume 22.</p>
+          <div class="chips" data-group="age" data-mode="single">
+            <button type="button" class="chip" aria-pressed="false" data-value="UNDER_18">Under 18</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="AGE_18_24">18–24</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="AGE_25_34">25–34</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="AGE_35_PLUS">35+</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend><span class="q__n">6</span> What would you do with an extra hour?</legend>
+          <p class="q__hint">Pick as many as you like. We'll protect this time first.</p>
+          <div class="chips" data-group="motivations" data-mode="multi">
+            <button type="button" class="chip" aria-pressed="false" data-value="FRIENDS_FAMILY">🫂 Friends &amp; family</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="SLEEP">😴 Sleep</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="GYM">🏋️ Gym / sport</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="STUDY">📚 Study / exam prep</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="READING">📖 Reading</button>
+            <button type="button" class="chip" aria-pressed="false" data-value="SIDE_PROJECT">🚀 A side project</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="calc__out reveal" id="calcOut">
+        <div class="card-night mirror">
+          <p class="mirror__label">Based on your answers · estimate</p>
+          <div class="mirror__line">
+            <span class="mirror__num" id="outDaily">54 m</span>
+            <span class="mirror__cap">a day on Reels &amp; Shorts</span>
+          </div>
+          <div class="mirror__line">
+            <span class="mirror__num" id="outDays">14 days</span>
+            <span class="mirror__cap">a year. Every year.</span>
+          </div>
+          <div class="mirror__line mirror__line--hero">
+            <span class="mirror__num mirror__num--sun" id="outYears">3.2 years</span>
+            <span class="mirror__cap mirror__cap--bright">of your waking life</span>
+          </div>
+          <p class="mirror__note">This happens to almost everyone. The feed is built to do it.</p>
+        </div>
+
+        <div class="card-night upside">
+          <p class="mirror__label">Now the good part. With Present</p>
+          <div class="bars" aria-hidden="true">
+            <div class="bar"><span class="bar__label">Today</span><span class="bar__track"><span class="bar__fill bar__fill--today"></span></span><span class="bar__val" id="barToday">54 m / day</span></div>
+            <div class="bar"><span class="bar__label">With Present</span><span class="bar__track"><span class="bar__fill bar__fill--present"></span></span><span class="bar__val" id="barPresent">27 m / day</span></div>
+          </div>
+          <p class="upside__big"><span class="mint">~<span id="outWeekly">3.2 h</span></span> back every week</p>
+          <ul class="equiv" id="outEquiv">
+            <li><span aria-hidden="true">🫂</span> 81 evenings with friends a year</li>
+            <li><span aria-hidden="true">😴</span> 13 extra hours of sleep a month</li>
+          </ul>
+          <div class="plan-line">
+            <p class="mirror__label">🎯 Your plan, in one line</p>
+            <p class="plan-line__text" id="outIntent">Keep my Instagram DMs and search, and my YouTube search, but block Instagram Reels and YouTube Shorts after 9 PM.</p>
+            <p class="plan-line__note">In the app, Gemini compiles this sentence into rules you approve.</p>
+          </div>
+          <div class="share-row">
+            <button type="button" class="btn btn--primary btn--sm" id="shareBtn">Share my number</button>
+            <span class="share-msg" id="shareMsg" role="status"></span>
+          </div>
+        </div>
+
+        <details class="how-calc">
+          <summary>estimate · how we calculate</summary>
+          <ul class="how-calc__list" id="formulaList"></ul>
+          <p>Lifetime uses 16 waking hours a day and a life expectancy of 78. Time back assumes a conservative 50% cut. The same pure functions run inside the Android app (<code>OnboardingModel.kt</code>).</p>
+          <p>Sources: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9974409">one sec study, PNAS 2023</a> · <a href="https://opal.so/blog/opals-2023-screen-time-report">Opal 2023 Screen Time Report</a> · <a href="https://indiantelevision.com/iworld/youtube-tops-indias-digital-attention-race-hansa-research-study-finds/">Hansa Research 2026</a></p>
+        </details>
+        <p class="sr-only" aria-live="polite" id="calcLive"></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- STATS -->
-<section class="stats on-paper">
-  <div class="stats-grid">
-    <div><div class="stat-num" data-count="4">0</div><div class="stat-label">apps guarded</div></div>
-    <div><div class="stat-num" data-count="100" data-suffix="%">0%</div><div class="stat-label">stays on your device</div></div>
-    <div><div class="stat-num" data-count="0">0</div><div class="stat-label">accounts required</div></div>
+<!-- 4. HOW IT WORKS -->
+<section class="how section light" id="how" aria-labelledby="how-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">How it works</p>
+      <h2 id="how-title">Say it. Gemini compiles it. Your phone enforces it.</h2>
+      <p>No settings maze. One sentence becomes a strict, typed policy that you check before anything changes.</p>
+    </header>
+    <ol class="how__steps">
+      <li class="how-card reveal" id="howSay">
+        <span class="how-card__n">1</span>
+        <h3>Say it</h3>
+        <p>Write what you want from your phone, the way you'd tell a friend.</p>
+        <div class="demo demo--say" aria-hidden="true">
+          <p class="demo__label">🎯 Your intent</p>
+          <p class="typed"><span id="typedText"></span><span class="caret">▍</span></p>
+          <span class="demo__btn" id="compileBtn">Compile with Gemini ✨</span>
+        </div>
+        <p class="sr-only">Example intent: Keep my Instagram DMs and YouTube subscriptions, but kill Reels and Shorts after 9 PM.</p>
+      </li>
+      <li class="how-card reveal" id="howCompile">
+        <span class="how-card__n">2</span>
+        <h3>Gemini compiles it</h3>
+        <p>Gemini on Cloud Run returns strict JSON against our schema. You review it as chips.</p>
+        <div class="demo demo--json" aria-hidden="true">
+          <pre class="json"><code id="jsonOut"></code></pre>
+          <div class="policy-chips" id="policyChips">
+            <p class="demo__label">✨ Gemini understood</p>
+            <div class="chip-row">
+              <span class="pchip pchip--block">✕ Instagram Reels</span>
+              <span class="pchip pchip--block">✕ YouTube Shorts</span>
+              <span class="pchip pchip--allow">✓ DMs</span>
+              <span class="pchip pchip--allow">✓ Subscriptions</span>
+              <span class="pchip pchip--allow">✓ Search</span>
+              <span class="pchip pchip--time">🕘 21:00 – 06:00</span>
+            </div>
+          </div>
+        </div>
+        <p class="sr-only">The policy blocks Instagram Reels and YouTube Shorts from 21:00 to 06:00 and keeps DMs, subscriptions and search.</p>
+      </li>
+      <li class="how-card reveal" id="howEnforce">
+        <span class="how-card__n">3</span>
+        <h3>Enforced on your phone in ~100&nbsp;ms</h3>
+        <p>An on-device accessibility engine bounces you out of Reels. DMs stay open. No network needed.</p>
+        <div class="demo demo--phone" aria-hidden="true">
+          <div class="mini-app" id="miniApp" data-view="home">
+            <div class="mini-app__view mv-home"><span class="mv-title">Instagram</span><span class="post"></span><span class="post post--short"></span></div>
+            <div class="mini-app__view mv-reels"><span class="big-emoji">🐶</span></div>
+            <div class="mini-app__view mv-dms"><span class="mv-title">Messages</span><span class="bubble bubble--in">did you see this? 😂</span><span class="bubble bubble--out">haha yes 😂</span></div>
+            <div class="mini-app__toast mini-app__toast--block">✕ Reels closed · 96 ms</div>
+            <div class="mini-app__toast mini-app__toast--allow">✓ DMs allowed</div>
+            <nav class="mini-app__nav"><span>🏠</span><span>🔍</span><span class="nav-reels">▶️</span><span class="nav-dms">💬</span></nav>
+            <span class="tap" id="tapDot"></span>
+          </div>
+        </div>
+        <p class="sr-only">Animation: tapping Reels bounces you back to the home feed; tapping DMs opens your messages normally.</p>
+      </li>
+    </ol>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features on-paper" id="features">
-  <div class="wrap">
-    <div class="section-header">
-      <span class="eyebrow">Features</span>
-      <h2>Smart blocking that just works</h2>
-      <p>Automatic, transparent, and built to stay out of your way.</p>
+<!-- 5. APP SCREENS -->
+<section class="screens section" id="screens" aria-labelledby="screens-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">Inside the app</p>
+      <h2 id="screens-title">Night sky to sunrise, in every screen.</h2>
+      <p>The feed is the night. Real life is the sunrise. Real recordings from the Android app, with live HTML recreations where we have not recorded yet.</p>
+    </header>
+
+    <div class="carousel" id="carousel">
+      <div class="carousel__tabs" role="tablist" aria-label="App screens">
+        <button type="button" role="tab" class="ctab" id="tab-0" aria-controls="slide-0" aria-selected="true">Questions</button>
+        <button type="button" role="tab" class="ctab" id="tab-1" aria-controls="slide-1" aria-selected="false" tabindex="-1">Your years</button>
+        <button type="button" role="tab" class="ctab" id="tab-2" aria-controls="slide-2" aria-selected="false" tabindex="-1">The upside</button>
+        <button type="button" role="tab" class="ctab" id="tab-3" aria-controls="slide-3" aria-selected="false" tabindex="-1">Gemini plan</button>
+        <button type="button" role="tab" class="ctab" id="tab-4" aria-controls="slide-4" aria-selected="false" tabindex="-1">Home</button>
+        <button type="button" role="tab" class="ctab" id="tab-5" aria-controls="slide-5" aria-selected="false" tabindex="-1">Turn-off guard</button>
+      </div>
+
+      <div class="carousel__body">
+        <button type="button" class="carousel__arrow carousel__arrow--prev" id="carPrev" aria-label="Previous screen">‹</button>
+        <div class="phone phone--carousel">
+          <!-- Drop a looping screen recording at the data-video path (optional poster: same name .jpg) and list its file name in media/videos.json to replace a recreation. -->
+          <div class="carousel__track phone__screen" id="carTrack">
+            <div class="slide is-active" id="slide-0" role="tabpanel" aria-labelledby="tab-0" data-video="media/onboarding-quiz.mp4">
+              <div class="scr scr-night s-questions" role="img" aria-label="Onboarding question: Which apps pull you in? Instagram, YouTube, Snapchat and TikTok tiles, selected one by one.">
+                <div class="progress"><span style="width:14%"></span></div>
+                <p class="s-h">Which apps pull you in?</p>
+                <p class="s-sub">Pick every one that eats your time.</p>
+                <div class="tiles">
+                  <span class="tile">📸<b>Instagram</b><i>✓</i></span>
+                  <span class="tile">▶️<b>YouTube</b><i>✓</i></span>
+                  <span class="tile">👻<b>Snapchat</b><i>✓</i></span>
+                  <span class="tile">🎵<b>TikTok</b><i>✓</i></span>
+                </div>
+                <span class="scr-btn scr-btn--sun s-bottom">Continue</span>
+              </div>
+            </div>
+            <div class="slide" id="slide-1" role="tabpanel" aria-labelledby="tab-1" data-video="media/reveal-years.mp4">
+              <div class="scr scr-night s-years" role="img" aria-label="Reveal screen: 1 h a day on Reels and Shorts, 15 days a year, 3.6 years of your waking life.">
+                <p class="s-label">Based on your answers</p>
+                <div class="yl"><span class="yl__n" data-count="60" data-format="min">1 h</span><span class="yl__c">a day on Reels &amp; Shorts</span></div>
+                <div class="yl"><span class="yl__n" data-count="15" data-format="days">15 days</span><span class="yl__c">a year. Every year.</span></div>
+                <div class="yl"><span class="yl__n yl__n--sun" data-count="3.6" data-format="years">3.6 years</span><span class="yl__c yl__c--bright">of your waking life</span></div>
+                <p class="s-sub yl__note">This happens to almost everyone. The feed is built to do it.</p>
+                <div class="s-bottom s-stack"><span class="scr-btn scr-btn--sun">There's a better way →</span><span class="scr-btn scr-btn--ghost">Share this</span></div>
+              </div>
+            </div>
+            <div class="slide" id="slide-2" role="tabpanel" aria-labelledby="tab-2" data-video="media/reveal-upside.mp4">
+              <div class="scr scr-night s-upside" role="img" aria-label="The upside: today 1 h a day, with Present 30 m a day. About 3.5 hours back every week, which is 91 evenings with friends a year or 15 gym sessions a month.">
+                <p class="s-h">Now the good part.</p>
+                <p class="s-sub">Even a conservative cut gives you a lot back.</p>
+                <div class="up-bars">
+                  <div class="up-bar"><span>Today</span><span>1 h / day</span><i class="up-bar__fill up-bar__fill--today"></i></div>
+                  <div class="up-bar"><span>With Present</span><span>30 m / day</span><i class="up-bar__fill up-bar__fill--present"></i></div>
+                </div>
+                <p class="up-big"><span class="mint">~</span><span class="mint" data-count="3.5" data-format="hours">3.5 h</span></p>
+                <p class="up-cap">back every week</p>
+                <div class="up-eq"><span>🫂</span><b>91 evenings with friends a year</b></div>
+                <div class="up-eq"><span>🏋️</span><b>15 gym sessions a month</b></div>
+                <span class="scr-btn scr-btn--sun s-bottom">Show me my plan</span>
+              </div>
+            </div>
+            <div class="slide" id="slide-3" role="tabpanel" aria-labelledby="tab-3" data-video="media/gemini-plan.mp4">
+              <div class="scr scr-cream s-review" role="img" aria-label="Review your policy: Gemini understood. Instagram: blocked Reels, allowed DMs and search. YouTube: blocked Shorts, allowed subscriptions. From 21:00 to 06:00. Activate button.">
+                <p class="s-h s-h--ink">Review your policy</p>
+                <p class="s-sub s-sub--ink">Nothing changes until you tap Activate.</p>
+                <div class="rv-summary"><p class="rv-gem">✨ Gemini understood</p><p>Reels and Shorts off after 9 PM. DMs and subscriptions stay.</p><span class="rv-count">2 rules</span></div>
+                <div class="rv-rule"><p class="rv-app">📸 Instagram</p><p class="rv-time">🕘 21:00 – 06:00</p><div class="chip-row"><span class="pchip pchip--block">Blocked: Reels</span><span class="pchip pchip--allow">Allowed: DMs</span><span class="pchip pchip--allow">Allowed: Search</span></div></div>
+                <div class="rv-rule"><p class="rv-app">▶️ YouTube</p><p class="rv-time">🕘 21:00 – 06:00</p><div class="chip-row"><span class="pchip pchip--block">Blocked: Shorts</span><span class="pchip pchip--allow">Allowed: Subscriptions</span></div></div>
+                <span class="scr-btn scr-btn--sun s-bottom">Activate</span>
+              </div>
+            </div>
+            <div class="slide" id="slide-4" role="tabpanel" aria-labelledby="tab-4" data-video="media/home.mp4">
+              <div class="scr scr-cream s-home" role="img" aria-label="Home screen: Protected, Reels and Shorts blocked, DMs kept. A ring fills to show 1 h 24 m reclaimed today. Your intent card and today's quest: call someone you miss.">
+                <div class="hm-top">
+                  <div class="hm-head"><div><p class="s-label">Good evening</p><p class="hm-brand">Present</p></div><span class="pchip pchip--sun">🔥 4 day streak</span></div>
+                  <div class="hm-status"><span class="pulse"></span><div><b>Protected</b><span>Reels &amp; Shorts blocked · DMs kept</span></div><span class="switch switch--on"></span></div>
+                  <div class="ring-wrap">
+                    <svg class="ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="ring__track"/><circle cx="60" cy="60" r="50" class="ring__fill" pathLength="100"/></svg>
+                    <div class="ring__text"><b>1 h 24 m</b><span>reclaimed today</span></div>
+                  </div>
+                  <div class="hm-stats"><span><b>20</b>Blocked</span><span><b>24</b>Attempts</span><span><b>83%</b>Deflected</span></div>
+                </div>
+                <div class="hm-card"><p class="s-label s-label--ink">🎯 Your intent</p><p class="hm-card__t">Reels and Shorts off after 9 PM. DMs and subscriptions stay.</p></div>
+                <div class="hm-card hm-card--quest"><p class="s-label s-label--ink">Today's quest</p><p class="hm-card__t">📞 Call someone you miss</p><p class="hm-card__d">A 5-minute call beats 50 Reels.</p></div>
+              </div>
+            </div>
+            <div class="slide" id="slide-5" role="tabpanel" aria-labelledby="tab-5" data-video="media/turn-off-guard.mp4">
+              <div class="scr scr-night s-guard" role="img" aria-label="Turn-off guard: a countdown ring of 15 seconds, Before you switch off Present…, and a quest card: Call someone you miss, with Call now and Another buttons.">
+                <div class="ring-wrap ring-wrap--sm">
+                  <svg class="ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="ring__track"/><circle cx="60" cy="60" r="50" class="ring__fill ring__fill--count" pathLength="100"/></svg>
+                  <div class="ring__text"><b class="g-count">15</b><span>seconds</span></div>
+                </div>
+                <p class="s-h s-center">Before you switch off Present…</p>
+                <p class="s-sub s-center">The feed will still be there in an hour. Will the people around you?</p>
+                <div class="quest-card"><p class="s-label s-label--ink">Your real-world quest</p><p class="hm-card__t">📞 Call someone you miss</p><p class="hm-card__d">A 5-minute call beats 50 Reels. Who haven't you talked to this week?</p><div class="qc-actions"><span class="scr-btn scr-btn--mint">📞 Call now</span><span class="scr-btn scr-btn--line">🔀 Another</span></div></div>
+                <span class="scr-btn scr-btn--sun s-bottom">I'll do it. Keep Present on</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="carousel__arrow carousel__arrow--next" id="carNext" aria-label="Next screen">›</button>
+      </div>
+      <p class="carousel__caption" id="carCaption" aria-live="polite">Seven quick questions. One decision per screen.</p>
     </div>
-    <div class="features-grid">
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
-        <h3>Automatic blocking</h3>
-        <p>Detects short-video players and navigates you away before temptation strikes.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
-        <h3>Instant response</h3>
-        <p>No delays, no loading screens — just immediate, clean navigation away.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></svg>
-        <h3>4 apps covered</h3>
-        <p>Instagram, YouTube, TikTok, Snapchat. All watched. One toggle each.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
-        <h3>Smart navigation</h3>
-        <p>On Instagram, returns you to Home feed. On others, navigates back.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
-        <h3>Focus schedules</h3>
-        <p>Set hours when blocking is always on — built for work or study.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V10M10 20V4M17 20v-7"/></svg>
-        <h3>Stats &amp; streaks</h3>
-        <p>See how many reels you've dodged. Track your clean-day streak.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-        <h3>100% private</h3>
-        <p>All data stays on your device. No servers. No tracking, ever.</p>
-      </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"/><circle cx="18" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="14" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
-        <h3>Per-app control</h3>
-        <p>Block TikTok but keep YouTube Shorts? Customize for each app.</p>
+  </div>
+</section>
+
+<!-- 6. TURN-OFF GUARD -->
+<section class="guard section light" id="guard" aria-labelledby="guard-title">
+  <div class="container guard__grid">
+    <div class="guard__copy reveal">
+      <p class="kicker">Turn-off guard</p>
+      <h2 id="guard-title">Switching off takes a moment. A real person takes priority.</h2>
+      <p>Willpower is weakest at 11 PM. So Present adds a little friction exactly when you reach for the off switch, and offers a better option.</p>
+      <ul class="ticks">
+        <li><b>A countdown that doubles.</b> 15 seconds the first time today, then 30, then 60.</li>
+        <li><b>A real-world social quest.</b> Call someone you miss, make a chai plan, talk to someone nearby, step outside.</li>
+        <li><b>A gentler exit.</b> "Pause for 15 minutes instead" turns itself back on.</li>
+        <li><b>Name it.</b> To switch off completely, you write why. Naming it helps you notice it.</li>
+      </ul>
+      <p class="try">Try it: flip the switch on the phone. →</p>
+    </div>
+
+    <div class="guard__demo reveal">
+      <div class="phone phone--guard">
+        <div class="phone__screen scr-night gd" id="guardDemo" data-mode="home">
+          <div class="gd-home">
+            <p class="s-label">Present</p>
+            <div class="hm-status hm-status--big">
+              <span class="pulse" id="gdDot"></span>
+              <div><b id="gdStatus">Protected</b><span id="gdStatusSub">Reels &amp; Shorts blocked · DMs kept</span></div>
+              <button type="button" class="switch switch--on" role="switch" aria-checked="true" id="gdSwitch" aria-label="Present protection"></button>
+            </div>
+            <p class="gd-hint">↑ Try switching Present off</p>
+            <div class="ring-wrap" aria-hidden="true">
+              <svg class="ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="ring__track"/><circle cx="60" cy="60" r="50" class="ring__fill" pathLength="100"/></svg>
+              <div class="ring__text"><b>1 h 24 m</b><span>reclaimed today</span></div>
+            </div>
+            <p class="gd-note" id="gdNote">Turn-offs today: 0</p>
+            <p class="gd-praise" id="gdPraise" hidden></p>
+          </div>
+          <div class="gd-guard" id="gdGuard" role="dialog" aria-modal="false" aria-labelledby="gdTitle" hidden>
+            <div class="ring-wrap ring-wrap--sm">
+              <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" class="ring__track"/><circle cx="60" cy="60" r="50" class="ring__fill" id="gdRing" pathLength="100"/></svg>
+              <div class="ring__text"><b id="gdCount">15</b><span id="gdCountLabel">seconds</span></div>
+            </div>
+            <p class="s-h s-center" id="gdTitle" tabindex="-1">Before you switch off Present…</p>
+            <p class="s-sub s-center" id="gdSub">The feed will still be there in an hour. Will the people around you?</p>
+            <div class="quest-card" aria-live="polite">
+              <p class="s-label s-label--ink">Your real-world quest</p>
+              <p class="hm-card__t" id="gdQuestTitle">📞 Call someone you miss</p>
+              <p class="hm-card__d" id="gdQuestDetail">A 5-minute call beats 50 Reels. Who haven't you talked to this week?</p>
+              <div class="qc-actions">
+                <button type="button" class="scr-btn scr-btn--mint" id="gdDo">📞 Call now</button>
+                <button type="button" class="scr-btn scr-btn--line" id="gdShuffle">🔀 Another quest</button>
+              </div>
+            </div>
+            <button type="button" class="scr-btn scr-btn--sun" id="gdKeep">I'll do it. Keep Present on</button>
+            <button type="button" class="scr-btn scr-btn--ghost" id="gdPause">Pause for 15 minutes instead</button>
+            <p class="gd-wait" id="gdWait" aria-live="polite">You can switch off in 15s</p>
+            <div class="gd-off" id="gdOff" hidden>
+              <label for="gdReason">What do you need the feed for?</label>
+              <input id="gdReason" type="text" placeholder="e.g. Posting my college fest Reel" autocomplete="off">
+              <p class="gd-help">Write a full sentence. Naming it helps you notice it.</p>
+              <button type="button" class="scr-btn scr-btn--coral" id="gdTurnOff" disabled>Turn off completely</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PIPELINE -->
-<section class="pipeline on-paper" id="how">
-  <div class="wrap">
-    <div class="section-header">
-      <span class="eyebrow">How it works</span>
-      <h2>One signal, four steps, no exceptions</h2>
-      <p>MindGuard runs the same pipeline every time, in this order, using Android's Accessibility Service to read screen structure — never content.</p>
-    </div>
-    <div class="pipe-track">
-      <div class="pipe-line"></div>
-      <div class="pipe-node"><div class="pipe-dot">01</div><h3>Watch</h3><p>Monitors screen IDs in the four target apps only.</p></div>
-      <div class="pipe-node"><div class="pipe-dot">02</div><h3>Detect</h3><p>Recognizes the short-video player's signature.</p></div>
-      <div class="pipe-node"><div class="pipe-dot">03</div><h3>Block</h3><p>Navigates you away before the first clip loads.</p></div>
-      <div class="pipe-node"><div class="pipe-dot">04</div><h3>Continue</h3><p>You stay in context — feed, not closed app.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- APPS -->
-<section class="apps on-paper" id="apps">
-  <div class="wrap">
-    <div class="section-header">
-      <span class="eyebrow">Supported apps</span>
-      <h2>Four apps. One mission.</h2>
-    </div>
-    <div class="apps-grid">
-      <div class="app-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>
-        <h3>Instagram</h3>
-        <p>Reels blocked, Home feed stays clear.</p>
-      </div>
-      <div class="app-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="4"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
-        <h3>YouTube</h3>
-        <p>Shorts blocked, regular videos untouched.</p>
-      </div>
-      <div class="app-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l8 2v9"/><circle cx="7" cy="18" r="2"/><circle cx="15" cy="16" r="2"/></svg>
-        <h3>TikTok</h3>
-        <p>For You &amp; Following feeds blocked.</p>
-      </div>
-      <div class="app-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
-        <h3>Snapchat</h3>
-        <p>Spotlight blocked, camera still works.</p>
-      </div>
+<!-- 7. PRIVACY -->
+<section class="privacy section" id="privacy" aria-labelledby="privacy-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">🔒 Your privacy</p>
+      <h2 id="privacy-title">Your screen never leaves your phone.</h2>
+      <p>Recognising Reels happens in memory on your phone. What leaves it is the sentence you write for Gemini, and nothing else about your screen.</p>
+    </header>
+    <div class="privacy__grid">
+      <article class="pcard pcard--reads reveal">
+        <h3><span aria-hidden="true">👀</span> What Present looks at</h3>
+        <p>The screen's structure inside Instagram, YouTube, TikTok and Snapchat, so it can recognise Reels and Shorts. Other apps are ignored.</p>
+      </article>
+      <article class="pcard pcard--never reveal">
+        <h3><span aria-hidden="true">🔒</span> What happens to it</h3>
+        <p>It's processed in memory on your phone: never stored, never sent. No screenshots, no OCR.</p>
+      </article>
+      <article class="pcard pcard--sent reveal">
+        <h3><span aria-hidden="true">✉️</span> What leaves your phone</h3>
+        <p>The sentence you type to Gemini (plus your current rules when you edit them) and, for weekly insights, aggregate block counts. Enforcement itself needs no network.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- SCREENSHOTS -->
-<section class="shots on-paper" id="screenshots">
-  <div class="wrap">
-    <div class="section-header">
-      <span class="eyebrow">Visual tour</span>
-      <h2>See it in action</h2>
-      <p>A simple interface that blocks reels without getting in your way.</p>
+<!-- 8. BUILT WITH GOOGLE -->
+<section class="google section light" id="google" aria-labelledby="google-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">Built with Google</p>
+      <h2 id="google-title">Gemini writes the rules. The phone keeps them.</h2>
+    </header>
+    <div class="arch reveal" role="img" aria-label="Architecture: the Android app and the Chrome extension send a one-line intent to the present-compiler service on Cloud Run. It reads its keys from Secret Manager and asks Gemini for structured output. A typed policy JSON comes back, and each client enforces it locally.">
+      <div class="arch__col">
+        <div class="node node--client"><span class="node__ico">📱</span><b>Android app</b><span>Intent → Review → Accessibility engine</span></div>
+        <div class="node node--client"><span class="node__ico">🧩</span><b>Chrome MV3</b><span>Popup + content script</span></div>
+      </div>
+      <div class="link"><span class="link__lbl">one-line intent</span><span class="link__line"></span><span class="link__lbl link__lbl--back">policy JSON</span></div>
+      <div class="arch__col">
+        <div class="node node--run"><span class="node__ico">☁️</span><b>Cloud Run</b><span>present-compiler · Hono + Zod</span></div>
+        <div class="link link--v"><span class="link__line"></span></div>
+        <div class="node node--secret"><span class="node__ico">🔐</span><b>Secret Manager</b><span>API keys, never in code</span></div>
+      </div>
+      <div class="link"><span class="link__lbl">JSON schema</span><span class="link__line"></span><span class="link__lbl link__lbl--back">structured output</span></div>
+      <div class="arch__col">
+        <div class="node node--gemini"><span class="node__ico">✨</span><b>Gemini</b><span>flash-lite → flash fallback, 6 s each</span></div>
+      </div>
     </div>
-    <div class="shots-row">
-      <div class="shot"><img src="screenshots/home-screen.png" alt="Home screen — stats and streak tracking" /></div>
-      <div class="shot"><img src="screenshots/settings-screen.png" alt="Settings — per-app blocking controls" /></div>
-      <div class="shot"><img src="screenshots/permission-setup.png" alt="Permission setup — guided installation" /></div>
-    </div>
+    <ul class="stack">
+      <li class="stack__item reveal"><h3>Gemini, structured output</h3><p>We send the Zod policy schema as <code>responseJsonSchema</code>, so the answer is always a typed policy, or a clear "rejected" with a reason.</p></li>
+      <li class="stack__item reveal"><h3>Cloud Run</h3><p>A small TypeScript service in <code>asia-south1</code>, with a model fallback chain so a busy model never stalls you.</p></li>
+      <li class="stack__item reveal"><h3>Secret Manager</h3><p>The Gemini key and the app key live in Secret Manager and are mounted at runtime.</p></li>
+      <li class="stack__item reveal"><h3>Android Accessibility</h3><p>On-device detection by class name and resource ID. Bounces you out of Reels and Shorts in about 100 ms, offline.</p></li>
+      <li class="stack__item reveal"><h3>Chrome MV3</h3><p>The same schema, imported from the server. Injected CSS and a MutationObserver hide Shorts and Reels on the web.</p></li>
+    </ul>
   </div>
 </section>
 
-<!-- REALITY CHECK -->
-<section class="reality on-paper">
-  <div class="wrap">
-    <div class="reality-card">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg>
-      <div>
-        <h3>Why Android warns you</h3>
-        <p>MindGuard isn't on the Google Play Store, so you'll see a Play Protect warning during install. That's normal for sideloaded apps — Google simply can't vet it through their store, not a sign it's unsafe. Tap <strong>"Install anyway"</strong> to proceed. The full source is on GitHub if you want to check for yourself.</p>
+<!-- 9. RESEARCH -->
+<section class="research section" id="research" aria-labelledby="research-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">The research</p>
+      <h2 id="research-title">Honest maths, from real studies.</h2>
+      <p>Every number in Present is labelled "estimate", uses conservative factors, and links back here.</p>
+    </header>
+    <div class="research__grid">
+      <article class="rcard reveal">
+        <p class="rcard__num"><span>36%</span></p>
+        <p>of app opens were abandoned when a 10-second pause with a moment to reflect stood in the way. Opens fell <b>57%</b> over 6 weeks.</p>
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9974409">one sec study, PNAS 2023 (Max Planck / Heidelberg)</a>
+      </article>
+      <article class="rcard reveal">
+        <p class="rcard__num"><span>"Years of your life"</span></p>
+        <p>Opal's lifetime projection is the most screenshotted and shared screen in its onboarding. Users call it "the biggest motivator".</p>
+        <a href="https://opal.so/blog/opals-2023-screen-time-report">Opal 2023 Screen Time Report</a>
+        <a href="https://lazyweb.com/canvas/flows/opal/onboarding">Opal onboarding flow teardown</a>
+      </article>
+      <article class="rcard reveal">
+        <p class="rcard__num"><span>~1 h + ~1 h</span></p>
+        <p>Indians spend about 1 h/day on YouTube and about 1 h/day on Instagram.</p>
+        <a href="https://indiantelevision.com/iworld/youtube-tops-indias-digital-attention-race-hansa-research-study-finds/">Hansa Research: YouTube tops India's digital attention race (2026)</a>
+        <a href="https://www.medianews4u.com/93-of-consumers-use-youtube-while-instagram-sees-nearly-one-hour-of-daily-engagement-hansa-research/">93% use YouTube, Instagram nearly 1 h/day (Hansa)</a>
+      </article>
+      <article class="rcard reveal">
+        <p class="rcard__num"><span>95–97%</span></p>
+        <p>of Instagram users watch Reels daily. One in six Indians spends 1.2 h/day on short-form.</p>
+        <a href="https://www.outlookbusiness.com/news/97-of-indians-watch-reels-daily-says-meta-study">97% of Indians watch Reels daily (Meta study)</a>
+        <a href="https://www.businessinsider.in/tech/news/one-in-six-indians-spends-1-2-hours-a-day-scrolling-through-shorts-reels-more-such/articleshow/105070572.cms">One in six Indians spends 1.2 h/day on short-form (Redseer)</a>
+      </article>
+    </div>
+    <details class="more-sources reveal">
+      <summary>More sources we read</summary>
+      <ul>
+        <li><a href="https://www.medien.ifi.lmu.de/pubdb/publications/pub/haliburton2024chi/haliburton2024chi.pdf">CHI 2024: longitudinal study of design frictions</a></li>
+        <li><a href="https://dev.to/astraedus/block-youtube-shorts-and-reels-on-android-keep-the-app-1b9h">Block Shorts and Reels on Android, keep the app (DEV)</a></li>
+        <li><a href="https://dev.to/lucidmach/overcoming-my-doomscrolling-addiction-reels-and-shorts-4jfn">Overcoming my doomscrolling addiction (DEV)</a></li>
+        <li><a href="https://hn.svelte.dev/item/48312443">Hacker News discussion on blockers</a></li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<!-- 10. CHROME + TEAM -->
+<section class="chrome section light" id="chrome" aria-labelledby="chrome-title">
+  <div class="container chrome__grid">
+    <div class="reveal">
+      <p class="kicker">Present for Chrome</p>
+      <h2 id="chrome-title">The same promise on your laptop.</h2>
+      <p>A Manifest V3 extension hides YouTube Shorts and Instagram Reels and Explore, and leaves search, subscriptions and DMs alone. Type your intent in the popup, compile it with Gemini, review, activate. The policy syncs with <code>chrome.storage.sync</code>.</p>
+      <ol class="load-steps">
+        <li>Build it from <code>extension/</code> with <code>npm run build</code>.</li>
+        <li>Open <code>chrome://extensions</code> and turn on Developer mode.</li>
+        <li>Load unpacked → pick <code>extension/dist/</code>. With no policy, Shorts and Reels are hidden by default.</li>
+      </ol>
+      <a class="btn btn--dark" href="https://github.com/Ashish-CodeJourney/Present/tree/main/extension">Get the extension source</a>
+    </div>
+    <div class="browser reveal" role="img" aria-label="A browser window on YouTube: the Shorts shelf is replaced by a note saying Shorts hidden by Present, while subscription videos stay.">
+      <div class="browser__bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span></div>
+      <div class="browser__body">
+        <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
+        <div class="yt-shorts"><span class="yt-shorts__cards"><i></i><i></i><i></i><i></i></span><span class="yt-shorts__hidden">🌅 Shorts hidden by Present</span></div>
+        <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- INSTALL -->
-<section class="install on-paper" id="install">
-  <div class="wrap">
-    <div class="section-header">
-      <span class="eyebrow">Installation</span>
-      <h2>Get started in two minutes</h2>
-    </div>
-    <div class="terminal">
-      <div class="terminal-bar"><span></span><span></span><span></span></div>
-      <div class="terminal-body">
-        <div class="term-line"><span class="term-prompt">1</span><span class="term-text"><a href="https://github.com/Ashish-CodeJourney/MindGuard/releases/latest" target="_blank" rel="noopener">Download the latest APK</a> from the GitHub release, or use the button up top.</span></div>
-        <div class="term-line"><span class="term-prompt">2</span><span class="term-text">Android will prompt you — tap <strong>Settings → Allow from this source</strong>, then install.</span></div>
-        <div class="term-line"><span class="term-prompt">3</span><span class="term-text">Go to <strong>Settings → Apps → MindGuard → ⋮ → Allow restricted settings</strong>.<br><span class="term-tag">Android 13+</span></span></div>
-        <div class="term-line"><span class="term-prompt">4</span><span class="term-text">Go to <strong>Settings → Accessibility → MindGuard</strong> and turn it on.</span></div>
-        <div class="term-line term-done"><span class="term-prompt">✓</span><span class="term-text">Done. Open Instagram or YouTube — Reels and Shorts stop cold.<span class="term-cursor"></span></span></div>
+<section class="team section" id="team" aria-labelledby="team-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="kicker">Team Hello Human</p>
+      <h2 id="team-title">Three people who'd rather you were out there.</h2>
+    </header>
+    <ul class="team__grid">
+      <li class="member reveal"><span class="member__av" aria-hidden="true">JD</span><h3>Jay Dobariya</h3><p>Android engine &amp; app</p></li>
+      <li class="member reveal"><span class="member__av" aria-hidden="true">AV</span><h3>Ashish Vaghela</h3><p>Gemini compiler, Cloud Run &amp; integration</p></li>
+      <li class="member reveal"><span class="member__av" aria-hidden="true">DJ</span><h3>Dhruvi Jha</h3><p>Chrome extension, design &amp; pitch</p></li>
+    </ul>
+    <div class="final reveal">
+      <img src="assets/logo.svg" alt="" width="72" height="72">
+      <p class="final__h">Go call someone you miss.</p>
+      <div class="cta-row cta-row--center">
+        <a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the Android app</a>
+        <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
       </div>
     </div>
   </div>
 </section>
+</main>
 
-<!-- CTA -->
-<section class="cta">
-  <h2>Your attention isn't the product here.</h2>
-  <p>Download MindGuard now. It's free, open source, and never phones home.</p>
-  <div class="cta-actions">
-    <a class="btn btn-fill" href="https://github.com/Ashish-CodeJourney/MindGuard/releases/latest" target="_blank" rel="noopener">Install the APK</a>
-    <a class="btn btn-ghost" href="https://github.com/Ashish-CodeJourney/MindGuard" target="_blank" rel="noopener">View on GitHub</a>
+<footer class="footer">
+  <div class="container footer__inner">
+    <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Present</span></a>
+    <p>Made by Team Hello Human for the Google Startup Buildathon. Open source under the <a href="https://github.com/Ashish-CodeJourney/Present/blob/main/LICENSE">MIT licence</a>.</p>
+    <p><a href="https://github.com/Ashish-CodeJourney/Present">GitHub</a> · <a href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Releases</a> · <a href="#research">Sources</a></p>
   </div>
-</section>
-
-<footer>
-  <p>MindGuard — MIT License — <a href="https://github.com/Ashish-CodeJourney/MindGuard" target="_blank" rel="noopener">github.com/Ashish-CodeJourney/MindGuard</a></p>
 </footer>
-
-<script src="script.js"></script>
-
 </body>
 </html>
