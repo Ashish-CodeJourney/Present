@@ -32,4 +32,4 @@ SA=$(gcloud projects describe $PROJECT --format='value(projectNumber)')-compute@
 gcloud projects add-iam-policy-binding $PROJECT --member serviceAccount:$SA --role roles/aiplatform.user
 ```
 
-To skip Vertex, set `GEMINI_API_KEY` instead of the three `GOOGLE_*` variables. `GEMINI_MODEL` overrides the default `gemini-2.5-flash`.
+To skip Vertex, set `GEMINI_API_KEY` instead of the three `GOOGLE_*` variables. `GEMINI_MODELS` is a comma-separated fallback chain (default `gemini-3.1-flash-lite,gemini-3.5-flash`). Each model gets `GEMINI_TIMEOUT_MS` (default 6000). If it is overloaded or slow, the next one is tried.

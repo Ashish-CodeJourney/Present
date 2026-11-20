@@ -16,7 +16,15 @@ export const parseJsonReply = (text: string): unknown => {
   }
 };
 
-export const geminiGenerator = (options: { readonly model: string }): GenerateJson => {
+export const firstSuccessful =
+  (generators: readonly GenerateJson[]): GenerateJson =>
+  (request) =>
+    generators.reduce<Promise<string>>(
+      (previous, next) => previous.catch(() => next(request)),
+      Promise.reject(new Error("No Gemini models configured")),
+    );
+
+export const geminiGenerator = (options: { readonly model: string; readonly timeoutMs: number }): GenerateJson => {
   const ai = new GoogleGenAI({});
   return async (request) => {
     const response = await ai.models.generateContent({
@@ -28,6 +36,7 @@ export const geminiGenerator = (options: { readonly model: string }): GenerateJs
         responseJsonSchema: request.responseJsonSchema,
         temperature: 0.2,
         thinkingConfig: { thinkingBudget: 0 },
+        abortSignal: AbortSignal.timeout(options.timeoutMs),
       },
     });
     return response.text ?? "";

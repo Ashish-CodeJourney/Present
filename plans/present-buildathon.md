@@ -25,7 +25,7 @@ policy, the user approves it on a review screen, and the existing on-device engi
 
 1. **Compiler in TypeScript (Hono + `@google/genai` + Zod), not FastAPI.** We write the policy schema once in Zod and
    the Chrome extension uses the same file. Zod 4 `z.toJSONSchema()` produces the `responseJsonSchema` we send to Gemini.
-2. **Model**: `GEMINI_MODEL` env var, default `gemini-2.5-flash`. `gemini-1.5-flash` in the PRD has been retired.
+2. **Model**: `GEMINI_MODELS` fallback chain, default `gemini-3.1-flash-lite,gemini-3.5-flash`, 6 s per model. Older models such as `gemini-1.5-flash` and `gemini-2.5-flash` are no longer available to new projects.
    On Cloud Run we call through **Vertex AI** (`GOOGLE_GENAI_USE_VERTEXAI=true`) with the service account, so no API
    key is stored. Locally we use `GEMINI_API_KEY`.
 3. **No Firebase Auth in the MVP.** A shared `x-present-key` header is enough for a demo. Auth is in the roadmap slide.

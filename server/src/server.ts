@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
-import { geminiGenerator } from "./gemini.js";
+import { firstSuccessful, geminiGenerator } from "./gemini.js";
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -8,8 +8,15 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
+const models = (process.env["GEMINI_MODELS"] ?? "gemini-3.1-flash-lite,gemini-3.5-flash")
+  .split(",")
+  .map((model) => model.trim())
+  .filter((model) => model !== "");
+
+const timeoutMs = Number(process.env["GEMINI_TIMEOUT_MS"] ?? "6000");
+
 const app = createApp({
-  generate: geminiGenerator({ model: process.env["GEMINI_MODEL"] ?? "gemini-2.5-flash" }),
+  generate: firstSuccessful(models.map((model) => geminiGenerator({ model, timeoutMs }))),
   apiKey: requireEnv("PRESENT_API_KEY"),
 });
 
