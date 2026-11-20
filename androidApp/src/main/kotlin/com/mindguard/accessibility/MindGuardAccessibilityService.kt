@@ -2,7 +2,11 @@ package com.mindguard.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
+import com.mindguard.shared.models.BlockAction
+import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
+import com.mindguard.shared.policy.PolicyEvaluator
+import com.mindguard.shared.policy.PresentPolicy
 import com.mindguard.shared.usecases.isPausedAt
 import com.mindguard.shared.rules.InstagramReelRule
 import com.mindguard.shared.rules.RuleEngine
@@ -11,6 +15,7 @@ import com.mindguard.shared.rules.TikTokRule
 import com.mindguard.shared.rules.YouTubeShortsRule
 import com.mindguard.shared.usecases.BlockCooldown
 import com.mindguard.shared.usecases.DetectBlockedContentUseCase
+import com.mindguard.storage.PolicyStore
 import com.mindguard.storage.SettingsDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +33,7 @@ import java.util.Calendar
 class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
 
     private val settingsDataStore: SettingsDataStore by inject()
+    private val policyStore: PolicyStore by inject()
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private lateinit var converter: AccessibilityEventConverter
@@ -37,6 +43,10 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     private val detector = DetectBlockedContentUseCase(
         RuleEngine(listOf(InstagramReelRule(), YouTubeShortsRule(), TikTokRule(), SnapchatSpotlightRule()))
     )
+    private val policyEvaluator = PolicyEvaluator()
+
+    // Policy and its derived package set are swapped together so the hot path never sees a mismatch.
+    private class ActivePolicy(val policy: PresentPolicy, val packages: Set<String>)
 
     // All cached synchronously — no coroutine hop on the hot path
     @Volatile private var enabledPackages: Set<String> = SettingsDataStore.run {
@@ -47,6 +57,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     @Volatile private var focusStartHour       = 9
     @Volatile private var focusEndHour         = 17
     @Volatile private var pauseUntilMs         = 0L
+    @Volatile private var activePolicy: ActivePolicy? = null
 
     // Watchdog: re-checks the current foreground window every WATCHDOG_INTERVAL_MS.
     // Suspended for POST_BLOCK_PAUSE_MS after each block to let navigation animations settle.
@@ -73,6 +84,11 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         serviceScope.launch { settingsDataStore.enabledPackagesFlow.collect { enabledPackages = it } }
         serviceScope.launch { settingsDataStore.pauseUntilFlow.collect { pauseUntilMs = it } }
         serviceScope.launch {
+            policyStore.activePolicyFlow.collect { policy ->
+                activePolicy = policy?.let { ActivePolicy(it, PolicyEvaluator.packagesFor(it)) }
+            }
+        }
+        serviceScope.launch {
             combine(
                 settingsDataStore.focusScheduleEnabledFlow,
                 settingsDataStore.focusStartHourFlow,
@@ -96,7 +112,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     private fun processEventInternal(event: AccessibilityEvent) {
         try {
             val pkg = event.packageName?.toString() ?: return
-            if (pkg !in enabledPackages) return
+            if (!isMonitored(pkg)) return
 
             if (android.util.Log.isLoggable("MindGuard", android.util.Log.DEBUG)) {
                 android.util.Log.d("MindGuard", "Event pkg=$pkg class=${event.className} type=${event.eventType}")
@@ -106,17 +122,16 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
             val result = detector.execute(snapshot)
             if (!result.shouldBlock) return
 
-            maybeBlock(result.action, pkg)
+            maybeBlock(result, pkg)
         } catch (e: Exception) {
             android.util.Log.e("MindGuard", "processEvent error: ${e.message}")
         }
     }
 
-    private fun maybeBlock(action: com.mindguard.shared.models.BlockAction, packageName: String = "") {
+    private fun maybeBlock(result: DetectionResult, packageName: String) {
         val now = System.currentTimeMillis()
-        val isProtected = (protectionEnabled || isCurrentlyInFocusHours()) &&
-            !isPausedAt(pauseUntilMs, now)
-        if (!isProtected) return
+        if (isPausedAt(pauseUntilMs, now)) return
+        if (!isProtected(result, packageName)) return
 
         // Suppress watchdog re-triggers for POST_BLOCK_PAUSE_MS after each block.
         // This prevents the watchdog from firing again before the navigation animation
@@ -126,7 +141,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         if (cooldown.canBlock(now)) {
             lastBlockTimeMs = now
             cooldown.recordBlock(now)
-            executeBlockAction(action)
+            executeBlockAction(result.action)
             serviceScope.launch(Dispatchers.IO) {
                 settingsDataStore.recordAttempt()
                 settingsDataStore.recordBlock(packageName)
@@ -137,7 +152,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     // Watchdog: scan the full active window every 800ms while a blocked app is foreground.
     // This catches the case where the app stops emitting events during reel playback.
     private fun manageWatchdog(pkg: String) {
-        if (pkg !in enabledPackages) {
+        if (!isMonitored(pkg)) {
             if (watchdogPackage != null) stopWatchdog()
             return
         }
@@ -165,9 +180,9 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
                 root.recycle(); return
             }
             root.recycle()
-            if (snapshot.packageName !in enabledPackages) return
+            if (!isMonitored(snapshot.packageName)) return
             val result = detector.execute(snapshot)
-            if (result.shouldBlock) maybeBlock(result.action, snapshot.packageName)
+            if (result.shouldBlock) maybeBlock(result, snapshot.packageName)
         } catch (e: Exception) {
             android.util.Log.e("MindGuard", "watchdog error: ${e.message}")
         }
@@ -184,6 +199,25 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    // With an active Present policy the policy decides which apps are watched and when
+    // (the protection toggle stays a master off switch); otherwise the legacy toggles apply.
+    private fun isMonitored(pkg: String): Boolean {
+        val policy = activePolicy ?: return pkg in enabledPackages
+        return pkg in policy.packages
+    }
+
+    private fun isProtected(result: DetectionResult, packageName: String): Boolean {
+        val policy = activePolicy?.policy ?: return protectionEnabled || isCurrentlyInFocusHours()
+        if (!protectionEnabled) return false
+        val surface = result.surface ?: return false
+        return policyEvaluator.shouldEnforce(policy, packageName, surface, currentMinuteOfDay())
+    }
+
+    private fun currentMinuteOfDay(): Int {
+        val now = Calendar.getInstance()
+        return now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+    }
+
     private fun isCurrentlyInFocusHours(): Boolean {
         if (!focusScheduleEnabled) return false
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
@@ -195,7 +229,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun executeBlockAction(action: com.mindguard.shared.models.BlockAction) {
+    private fun executeBlockAction(action: BlockAction) {
         try { executor.execute(action) } catch (e: Exception) {
             android.util.Log.e("MindGuard", "executeBlockAction error: ${e.message}")
         }

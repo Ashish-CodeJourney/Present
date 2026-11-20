@@ -3,6 +3,7 @@ package com.mindguard.shared.rules
 import com.mindguard.shared.models.BlockAction
 import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
+import com.mindguard.shared.policy.BlockedSurface
 
 class SnapchatSpotlightRule : BlockingRule {
 
@@ -30,7 +31,8 @@ class SnapchatSpotlightRule : BlockingRule {
             DetectionResult(
                 shouldBlock = true,
                 action      = BlockAction.GO_BACK,
-                reason      = "Snapchat Spotlight detected ($score signals)"
+                reason      = "Snapchat Spotlight detected ($score signals)",
+                surface     = BlockedSurface.SPOTLIGHT
             )
         } else noBlock()
     }

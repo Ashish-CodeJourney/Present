@@ -1,6 +1,8 @@
 package com.mindguard.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,13 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mindguard.ui.present.formatTimeReclaimed
 import java.util.Calendar
-
-private fun formatDuration(seconds: Long): String = when {
-    seconds < 60   -> "${seconds}s"
-    seconds < 3600 -> "${seconds / 60}m ${seconds % 60}s"
-    else           -> "${seconds / 3600}h ${(seconds % 3600) / 60}m"
-}
 
 private fun formatPauseTime(pauseUntilMs: Long): String {
     val cal = Calendar.getInstance()
@@ -38,9 +35,11 @@ fun HomeScreen(
     onToggleProtection: (Boolean) -> Unit,
     onResumeFromPause: () -> Unit = {},
     onViewStats: () -> Unit,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    activePolicySummary: String? = null,
+    onEditIntent: () -> Unit = {},
+    onNeedFiveMinutes: () -> Unit = {}
 ) {
-    val timeSavedSeconds = blockCount * 90L
     val deflectedPct     = if (attemptCount > 0) (blockCount * 100 / attemptCount) else 0L
     val isPaused = pauseUntilMs > 0L && System.currentTimeMillis() < pauseUntilMs
 
@@ -48,6 +47,7 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF4F3FF))
+            .verticalScroll(rememberScrollState())
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -59,7 +59,7 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("MindGuard", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
+            Text("Present", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
             IconButton(onClick = onOpenSettings) {
                 Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color(0xFF635BBB))
             }
@@ -81,6 +81,10 @@ fun HomeScreen(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        IntentCard(summary = activePolicySummary, onEditIntent = onEditIntent)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -150,7 +154,7 @@ fun HomeScreen(
         // 2×2 stats grid
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             StatCard("🚫", "Videos Blocked", blockCount.toString(),            Modifier.weight(1f))
-            StatCard("⏱️", "Time Saved",     formatDuration(timeSavedSeconds), Modifier.weight(1f))
+            StatCard("⏱️", "Time Reclaimed", formatTimeReclaimed(blockCount), Modifier.weight(1f))
         }
         Spacer(modifier = Modifier.height(12.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -158,7 +162,20 @@ fun HomeScreen(
             StatCard("🎯", "Deflected",  "$deflectedPct%",        Modifier.weight(1f))
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(20.dp))
+
+        if (!isPaused) {
+            OutlinedButton(
+                onClick = onNeedFiveMinutes,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text("⏳ I need 5 minutes", color = Color(0xFF635BBB), fontSize = 15.sp)
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         TextButton(onClick = onViewStats) {
             Text("View All-Time Stats →", color = Color(0xFF635BBB), fontSize = 15.sp)
@@ -184,6 +201,42 @@ private fun StatCard(emoji: String, label: String, value: String, modifier: Modi
             Spacer(modifier = Modifier.height(4.dp))
             Text(value, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
             Text(label, fontSize = 11.sp, color = Color(0xFF888888), textAlign = TextAlign.Center)
+        }
+    }
+}
+
+@Composable
+private fun IntentCard(summary: String?, onEditIntent: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            Text("🎯 Your intent", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Color(0xFF635BBB))
+            Spacer(modifier = Modifier.height(6.dp))
+            if (summary != null) {
+                Text(summary, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1A1A2E), lineHeight = 22.sp)
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedButton(onClick = onEditIntent, shape = RoundedCornerShape(12.dp)) {
+                    Text("Edit", color = Color(0xFF635BBB))
+                }
+            } else {
+                Text(
+                    "Say what you want from your phone, and Gemini turns it into rules.",
+                    fontSize = 14.sp,
+                    color = Color(0xFF888888)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onEditIntent,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF635BBB))
+                ) {
+                    Text("Tell Present what you want ✨", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
         }
     }
 }

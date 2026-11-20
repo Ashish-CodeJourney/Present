@@ -3,6 +3,7 @@ package com.mindguard.shared.rules
 import com.mindguard.shared.models.BlockAction
 import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
+import com.mindguard.shared.policy.BlockedSurface
 
 class YouTubeShortsRule : BlockingRule {
 
@@ -31,13 +32,13 @@ class YouTubeShortsRule : BlockingRule {
         if (snapshot.packageName != YOUTUBE_PACKAGE) return noBlock()
         if (isShortsByClassName(snapshot.windowClassName)) {
             return DetectionResult(shouldBlock = true, action = BlockAction.GO_BACK,
-                reason = "YouTube Shorts player — class name match")
+                reason = "YouTube Shorts player — class name match", surface = BlockedSurface.SHORTS_PLAYER)
         }
         val hasPlayerResourceId = snapshot.resourceIds.any { id ->
             SHORTS_PLAYER_RESOURCE_IDS.any { id.contains(it, ignoreCase = true) }
         }
         return if (hasPlayerResourceId) {
-            DetectionResult(shouldBlock = true, action = BlockAction.GO_BACK, reason = "YouTube Shorts player detected")
+            DetectionResult(shouldBlock = true, action = BlockAction.GO_BACK, reason = "YouTube Shorts player detected", surface = BlockedSurface.SHORTS_PLAYER)
         } else noBlock()
     }
 

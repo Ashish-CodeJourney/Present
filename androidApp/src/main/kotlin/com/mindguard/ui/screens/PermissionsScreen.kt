@@ -41,7 +41,7 @@ fun PermissionsScreen(
         )
 
         Text(
-            "MindGuard uses Android's Accessibility API to detect short-video feeds (Reels, Shorts, Spotlight) — entirely on-device. No data leaves your phone.",
+            "Present uses Android's Accessibility API to detect short-video feeds (Reels, Shorts, Spotlight) — entirely on-device. No data leaves your phone.",
             textAlign = TextAlign.Center,
             fontSize = 14.sp,
             color = Color(0xFF444444),
@@ -69,9 +69,9 @@ fun PermissionsScreen(
             StepCard(
                 number = "2",
                 title = "Enable Accessibility Access",
-                description = "After step 1 is done, open Accessibility Settings and enable MindGuard.",
+                description = "After step 1 is done, open Accessibility Settings and enable Present.",
                 steps = listOf(
-                    "Find \"MindGuard\" in the list",
+                    "Find \"Present\" in the list",
                     "Tap it and enable the toggle"
                 ),
                 buttonLabel = "Open Accessibility Settings",
@@ -80,7 +80,7 @@ fun PermissionsScreen(
             )
         } else {
             Text(
-                "Steps: Find \"MindGuard\" in the list, tap it, enable the toggle.",
+                "Steps: Find \"Present\" in the list, tap it, enable the toggle.",
                 textAlign = TextAlign.Center,
                 fontSize = 13.sp,
                 color = Color(0xFF666666),

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -17,6 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlin.stdlib)
             implementation(libs.koin.core)
+            api(libs.kotlinx.serialization.json)
         }
 
         commonTest.dependencies {

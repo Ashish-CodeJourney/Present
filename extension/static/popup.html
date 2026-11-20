@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Present</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Present</h1>
+        <p class="byline">by Hello Human</p>
+      </div>
+      <div class="counter" title="Algorithmic surfaces blocked today">
+        <span id="intercepts">0</span>
+        <small>intercepted today</small>
+      </div>
+    </header>
+
+    <section id="current" class="card current">
+      <p class="label">Active policy</p>
+      <p id="current-summary" class="summary"></p>
+    </section>
+
+    <section id="compose-view">
+      <label for="prompt" class="label">What do you want from the web?</label>
+      <textarea id="prompt" rows="4" placeholder="Block Shorts and Reels on weeknights after 10pm, but keep my subscriptions and DMs."></textarea>
+      <button id="compile" class="primary">
+        <span class="when-idle">Compile with Gemini</span>
+        <span class="when-busy"><span class="spinner" aria-hidden="true"></span>Compiling…</span>
+      </button>
+      <p id="rejected" class="notice rejected" hidden></p>
+      <p id="error" class="notice error" hidden></p>
+    </section>
+
+    <section id="review-view" class="card review" hidden>
+      <p class="label">Review</p>
+      <p id="review-summary" class="summary"></p>
+      <div id="review-rules"></div>
+      <div class="actions">
+        <button id="discard" class="ghost">Back</button>
+        <button id="activate" class="primary">Activate</button>
+      </div>
+    </section>
+
+    <p id="activated" class="notice ok" hidden>Policy active. Reload open tabs to see it everywhere.</p>
+
+    <details class="settings">
+      <summary>Settings</summary>
+      <label for="api-url" class="label">Service URL</label>
+      <input id="api-url" type="url" spellcheck="false" />
+      <label for="api-key" class="label">API key</label>
+      <input id="api-key" type="password" spellcheck="false" />
+      <div class="actions">
+        <button id="reset-policy" class="ghost">Reset to default</button>
+        <button id="save-settings" class="ghost">Save</button>
+      </div>
+    </details>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

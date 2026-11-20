@@ -3,6 +3,7 @@ package com.mindguard.shared.rules
 import com.mindguard.shared.models.BlockAction
 import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
+import com.mindguard.shared.policy.BlockedSurface
 
 class InstagramReelRule : BlockingRule {
 
@@ -39,14 +40,14 @@ class InstagramReelRule : BlockingRule {
         if (snapshot.packageName != INSTAGRAM_PACKAGE) return noBlock()
         if (isReelPlayerByClassName(snapshot.windowClassName)) {
             return DetectionResult(shouldBlock = true, action = BlockAction.CLICK_SAFE_TAB,
-                reason = "Instagram Reel player — class name match")
+                reason = "Instagram Reel player — class name match", surface = BlockedSurface.REELS_TAB)
         }
         if (isFeedScreen(snapshot.resourceIds)) return noBlock()
         val hasPlayerResourceId = snapshot.resourceIds.any { id ->
             REEL_PLAYER_RESOURCE_IDS.any { id.contains(it, ignoreCase = true) }
         }
         return if (hasPlayerResourceId) {
-            DetectionResult(shouldBlock = true, action = BlockAction.CLICK_SAFE_TAB, reason = "Instagram Reel player detected")
+            DetectionResult(shouldBlock = true, action = BlockAction.CLICK_SAFE_TAB, reason = "Instagram Reel player detected", surface = BlockedSurface.REELS_TAB)
         } else noBlock()
     }
 

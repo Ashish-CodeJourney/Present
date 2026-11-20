@@ -37,6 +37,13 @@ kotlin {
     }
 }
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val presentApiUrl: String = localProperties.getProperty("present.apiUrl") ?: "http://10.0.2.2:8080"
+val presentApiKey: String = localProperties.getProperty("present.apiKey") ?: "dev-key"
+
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val hasKeystore = keystorePropertiesFile.exists()
 val keystoreProperties = Properties().apply {
@@ -53,6 +60,9 @@ android {
         targetSdk = 34
         versionCode = 2
         versionName = "0.2.0"
+
+        buildConfigField("String", "PRESENT_API_URL", "\"$presentApiUrl\"")
+        buildConfigField("String", "PRESENT_API_KEY", "\"$presentApiKey\"")
     }
 
     if (hasKeystore) {
@@ -68,6 +78,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {

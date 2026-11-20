@@ -2,13 +2,41 @@ package com.mindguard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mindguard.network.CompilerClient
+import com.mindguard.network.InsightsRequest
+import com.mindguard.shared.policy.PresentPolicy
+import com.mindguard.storage.PolicyStore
 import com.mindguard.storage.SettingsDataStore
+import com.mindguard.ui.present.CompileUiState
+import com.mindguard.ui.present.InsightsLoader
+import com.mindguard.ui.present.InsightsUiState
+import com.mindguard.ui.present.IntentCompiler
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val store: SettingsDataStore) : ViewModel() {
+const val PAUSE_DURATION_MS = 5 * 60 * 1000L
+
+class MainViewModel(
+    private val store: SettingsDataStore,
+    private val policyStore: PolicyStore,
+    compilerClient: CompilerClient
+) : ViewModel() {
+
+    private val intentCompiler = IntentCompiler(compilerClient)
+    private val insightsLoader = InsightsLoader(compilerClient)
+
+    val activePolicy: StateFlow<PresentPolicy?> = policyStore.activePolicyFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val compileState: StateFlow<CompileUiState> = intentCompiler.state
+
+    val insightsState: StateFlow<InsightsUiState> = insightsLoader.state
+
+    private val _draftPrompt = MutableStateFlow("")
+    val draftPrompt: StateFlow<String> = _draftPrompt
 
     val protectionEnabled: StateFlow<Boolean> = store.protectionEnabledFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
@@ -94,5 +122,44 @@ class MainViewModel(private val store: SettingsDataStore) : ViewModel() {
 
     fun resumeFromPause() {
         viewModelScope.launch { store.resumeFromPause() }
+    }
+
+    fun updateDraftPrompt(text: String) {
+        _draftPrompt.value = text
+    }
+
+    fun compileIntent() {
+        viewModelScope.launch { intentCompiler.compile(_draftPrompt.value, activePolicy.value) }
+    }
+
+    fun backToIntent() {
+        intentCompiler.reset()
+    }
+
+    fun activatePolicy(policy: PresentPolicy) {
+        viewModelScope.launch {
+            policyStore.activate(policy)
+            intentCompiler.reset()
+            _draftPrompt.value = ""
+        }
+    }
+
+    fun pauseForFiveMinutes() {
+        pauseProtection(PAUSE_DURATION_MS)
+    }
+
+    fun requestWeeklyInsight() {
+        val byApp = mapOf(
+            "instagram" to instagramBlocks.value,
+            "youtube"   to youtubeBlocks.value,
+            "tiktok"    to tiktokBlocks.value,
+            "snapchat"  to snapchatBlocks.value
+        )
+        val request = InsightsRequest(
+            interceptsByApp = byApp,
+            streakDays = currentStreak.value,
+            totalIntercepts = maxOf(totalBlocks.value, byApp.values.sum())
+        )
+        viewModelScope.launch { insightsLoader.load(request) }
     }
 }

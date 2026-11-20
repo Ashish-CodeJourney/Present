@@ -3,6 +3,7 @@ package com.mindguard.shared.rules
 import com.mindguard.shared.models.BlockAction
 import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
+import com.mindguard.shared.policy.BlockedSurface
 
 class TikTokRule : BlockingRule {
 
@@ -35,7 +36,8 @@ class TikTokRule : BlockingRule {
             DetectionResult(
                 shouldBlock = true,
                 action      = BlockAction.GO_BACK,
-                reason      = "TikTok short video feed detected"
+                reason      = "TikTok short video feed detected",
+                surface     = BlockedSurface.REELS_TAB
             )
         } else noBlock()
     }

@@ -20,12 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-private fun formatDuration(seconds: Long): String = when {
-    seconds < 60   -> "${seconds}s"
-    seconds < 3600 -> "${seconds / 60}m ${seconds % 60}s"
-    else           -> "${seconds / 3600}h ${(seconds % 3600) / 60}m"
-}
+import com.mindguard.ui.present.InsightsUiState
+import com.mindguard.ui.present.formatTimeReclaimed
 
 @Composable
 fun StatsScreen(
@@ -39,6 +35,8 @@ fun StatsScreen(
     youtubeBlocks: Long = 0L,
     tiktokBlocks: Long = 0L,
     snapchatBlocks: Long = 0L,
+    insightsState: InsightsUiState = InsightsUiState.Idle,
+    onRequestInsight: () -> Unit = {},
     onBack: () -> Unit
 ) {
     var showToday by remember { mutableStateOf(true) }
@@ -118,16 +116,24 @@ fun StatsScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("⏱️ Time Saved", fontSize = 15.sp, color = Color.White.copy(alpha = 0.8f))
+                Text("⏱️ Time reclaimed", fontSize = 15.sp, color = Color.White.copy(alpha = 0.8f))
                 Text(
-                    formatDuration(blocks * 90L),
+                    "≈ ${formatTimeReclaimed(blocks)}",
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                Text("~90s per video blocked", fontSize = 12.sp, color = Color.White.copy(alpha = 0.6f))
+                Text(
+                    "$blocks intercepts × 4.2 min of scrolling each",
+                    fontSize = 12.sp,
+                    color = Color.White.copy(alpha = 0.6f)
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InsightCard(state = insightsState, onRequestInsight = onRequestInsight)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -368,5 +374,74 @@ private fun DetailCard(emoji: String, label: String, value: String, modifier: Mo
             Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
             Text(label, fontSize = 11.sp, color = Color(0xFF888888), textAlign = TextAlign.Center)
         }
+    }
+}
+
+@Composable
+private fun InsightCard(state: InsightsUiState, onRequestInsight: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text("🧠 Weekly insight", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
+            Text(
+                "Gemini reads your intercept counts (never your content)",
+                fontSize = 12.sp,
+                color = Color(0xFF888888)
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+
+            when (state) {
+                InsightsUiState.Idle -> InsightButton("Get my weekly insight from Gemini ✨", onRequestInsight)
+                InsightsUiState.Loading -> Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color(0xFF635BBB),
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("Gemini is reading your week…", fontSize = 14.sp, color = Color(0xFF635BBB))
+                }
+                is InsightsUiState.Ready -> Column {
+                    Text(state.headline, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF635BBB))
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(state.insight, fontSize = 14.sp, color = Color(0xFF1A1A2E))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Surface(shape = RoundedCornerShape(12.dp), color = Color(0xFFE3F5E6)) {
+                        Text(
+                            "💡 ${state.suggestion}",
+                            fontSize = 14.sp,
+                            color = Color(0xFF1B5E20),
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+                }
+                is InsightsUiState.Error -> Column {
+                    Text(state.message, fontSize = 14.sp, color = Color(0xFFC62828))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    InsightButton("Try again", onRequestInsight)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun InsightButton(label: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF635BBB))
+    ) {
+        Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
     }
 }

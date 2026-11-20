@@ -20,7 +20,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "MindGuard",
+            "Present",
             fontSize = 32.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -32,7 +32,7 @@ fun OnboardingScreen(onContinue: () -> Unit) {
         )
 
         Text(
-            "MindGuard detects and blocks endless scrolling on Instagram Reels, YouTube Shorts, and more.",
+            "Tell Present what you want in plain words. It removes Reels and Shorts and keeps your DMs and search.",
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 24.dp)
         )

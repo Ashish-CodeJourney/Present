@@ -15,7 +15,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import kotlinx.coroutines.delay
+import com.mindguard.ui.present.CompileUiState
+import com.mindguard.ui.present.pauseCountdownSeconds
 import com.mindguard.ui.screens.HomeScreen
+import com.mindguard.ui.screens.IntentScreen
+import com.mindguard.ui.screens.PauseCardScreen
+import com.mindguard.ui.screens.ReviewScreen
 import com.mindguard.ui.screens.OnboardingScreen
 import com.mindguard.ui.screens.PermissionsScreen
 import com.mindguard.ui.screens.SettingsScreen
@@ -70,7 +75,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { ONBOARDING, PERMISSIONS, HOME, STATS, SETTINGS }
+private enum class Screen { ONBOARDING, PERMISSIONS, HOME, STATS, SETTINGS, INTENT, REVIEW, PAUSE }
 
 @Composable
 fun MindGuardApp(
@@ -100,6 +105,10 @@ fun MindGuardApp(
     val youtubeBlocks       by viewModel.youtubeBlocks.collectAsState()
     val tiktokBlocks        by viewModel.tiktokBlocks.collectAsState()
     val snapchatBlocks      by viewModel.snapchatBlocks.collectAsState()
+    val activePolicy        by viewModel.activePolicy.collectAsState()
+    val compileState        by viewModel.compileState.collectAsState()
+    val draftPrompt         by viewModel.draftPrompt.collectAsState()
+    val insightsState       by viewModel.insightsState.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     var accessibilityEnabled by remember { mutableStateOf(checkAccessibilityEnabled()) }
@@ -153,8 +162,58 @@ fun MindGuardApp(
             onToggleProtection = viewModel::toggleProtection,
             onResumeFromPause  = viewModel::resumeFromPause,
             onViewStats        = { currentScreen = Screen.STATS },
-            onOpenSettings     = { currentScreen = Screen.SETTINGS }
+            onOpenSettings     = { currentScreen = Screen.SETTINGS },
+            activePolicySummary = activePolicy?.summary,
+            onEditIntent       = { currentScreen = Screen.INTENT },
+            onNeedFiveMinutes  = { currentScreen = Screen.PAUSE }
         )
+        Screen.INTENT -> {
+            val leaveIntent = {
+                viewModel.backToIntent()
+                currentScreen = Screen.HOME
+            }
+            BackHandler(enabled = compileState != CompileUiState.Loading) { leaveIntent() }
+            LaunchedEffect(compileState) {
+                if (compileState is CompileUiState.Review) currentScreen = Screen.REVIEW
+            }
+            IntentScreen(
+                prompt          = draftPrompt,
+                compileState    = compileState,
+                hasActivePolicy = activePolicy != null,
+                onPromptChange  = viewModel::updateDraftPrompt,
+                onCompile       = viewModel::compileIntent,
+                onBack          = leaveIntent
+            )
+        }
+        Screen.REVIEW -> {
+            val backToEdit = {
+                viewModel.backToIntent()
+                currentScreen = Screen.INTENT
+            }
+            BackHandler { backToEdit() }
+            when (val state = compileState) {
+                is CompileUiState.Review -> ReviewScreen(
+                    policy     = state.policy,
+                    onActivate = {
+                        viewModel.activatePolicy(state.policy)
+                        currentScreen = Screen.HOME
+                    },
+                    onEdit     = backToEdit
+                )
+                else -> LaunchedEffect(Unit) { currentScreen = Screen.INTENT }
+            }
+        }
+        Screen.PAUSE -> {
+            BackHandler { currentScreen = Screen.HOME }
+            PauseCardScreen(
+                countdownSeconds = pauseCountdownSeconds(activePolicy?.pauseCardSettings),
+                onUnlock = {
+                    viewModel.pauseForFiveMinutes()
+                    currentScreen = Screen.HOME
+                },
+                onDismiss = { currentScreen = Screen.HOME }
+            )
+        }
         Screen.STATS -> {
             BackHandler { currentScreen = Screen.HOME }
             StatsScreen(
@@ -168,6 +227,8 @@ fun MindGuardApp(
                 youtubeBlocks     = youtubeBlocks,
                 tiktokBlocks      = tiktokBlocks,
                 snapchatBlocks    = snapchatBlocks,
+                insightsState     = insightsState,
+                onRequestInsight  = viewModel::requestWeeklyInsight,
                 onBack            = { currentScreen = Screen.HOME }
             )
         }
