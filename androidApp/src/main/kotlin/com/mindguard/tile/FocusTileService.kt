@@ -1,5 +1,6 @@
 package com.mindguard.tile
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
@@ -51,6 +52,8 @@ class FocusTileService : TileService(), KoinComponent {
         }
     }
 
+    // The PendingIntent overload only exists on API 34+, so older devices need the Intent one.
+    @SuppressLint("StartActivityAndCollapseDeprecated")
     private fun openTurnOffGuard() {
         val intent = Intent(this, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
