@@ -120,14 +120,14 @@ private fun DisclosureCard() {
         Spacer(modifier = Modifier.height(12.dp))
         Text("What Present reads", style = PresentType.Label, color = PresentPalette.InkMuted)
         Text(
-            "Which screen is open in Instagram, YouTube, Snapchat or TikTok, so it can close Reels and Shorts.",
+            "The screen's layout and on-screen labels, only inside Instagram, YouTube, Snapchat and TikTok, so it can recognise and close Reels and Shorts. Everything else on your phone is ignored.",
             style = PresentType.Body,
             color = PresentPalette.Ink
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Text("What it never reads", style = PresentType.Label, color = PresentPalette.InkMuted)
+        Text("What it never does", style = PresentType.Label, color = PresentPalette.InkMuted)
         Text(
-            "Your messages, photos or what you type. Nothing is sent off your phone.",
+            "Store or send what's on your screen. It's checked in memory and forgotten instantly: no screenshots, no recordings. Only the sentence you type to Gemini leaves your phone.",
             style = PresentType.Body,
             color = PresentPalette.Ink
         )

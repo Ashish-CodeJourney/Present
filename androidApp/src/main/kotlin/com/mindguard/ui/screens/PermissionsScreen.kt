@@ -66,7 +66,7 @@ fun PermissionsScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "Present uses Android's Accessibility API to detect short-video feeds (Reels, Shorts, Spotlight) — entirely on-device. No data leaves your phone.",
+                "Present uses Android's Accessibility API to recognise Reels, Shorts and Spotlight inside those apps only. What's on your screen is checked in memory on your phone and never stored or sent.",
                 style = PresentType.Body,
                 color = PresentPalette.OnNightMuted,
                 textAlign = TextAlign.Center
