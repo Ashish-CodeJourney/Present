@@ -65,6 +65,17 @@ android {
         buildConfigField("String", "PRESENT_API_KEY", "\"$presentApiKey\"")
     }
 
+    // Shared debug key so every CI-built debug APK installs as an update over the last one.
+    // Debug credentials are the Android defaults and are not secret.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     if (hasKeystore) {
         signingConfigs {
             create("release") {

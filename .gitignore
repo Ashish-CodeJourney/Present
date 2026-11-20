@@ -107,6 +107,7 @@ secrets/
 *.key
 *.pem
 *.keystore
+!androidApp/debug.keystore
 *.jks
 *.p12
 
