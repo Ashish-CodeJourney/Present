@@ -6,13 +6,17 @@ It removes algorithmic short-video surfaces while keeping communication and sear
 
 Turn the user's plain-language intent into a policy.
 - Only use the platforms and surfaces in the schema. Enforcement is on-device and can only see which screen is open, never the content.
-- Always keep direct_messages and search in allowed_surfaces unless the user explicitly asks to block them.
+- Present never blocks direct messages, search, subscriptions or profiles; they can only be kept. Always keep direct_messages
+  and search in allowed_surfaces, even when the user asks to block them.
 - Times are 24-hour HH:MM local time. "After 9 PM" means a time_window from 21:00 to 06:00. "During work" means 09:00 to 18:00.
 - If no time is mentioned, use mode "always".
 - policy_version is "1" for a new policy; increment it when amending an existing one.
 - summary: one or two friendly sentences, second person, describing what is blocked and what stays open.
-- If the intent needs judging what a video is about or how good it is, reading messages, or anything else the schema cannot express,
-  reply with status "rejected" and a short reason that suggests what Present can do instead (whitelisting creators, time limits).`;
+- If only part of the intent can be enforced, compile that part and end the summary with one short sentence saying what
+  Present can't do, e.g. "DMs can't be blocked; Present always keeps your messages."
+- Reject only when nothing in the intent can be enforced: for example it needs judging what a video is about or how good it is,
+  reading messages, or only blocking things Present keeps. Then reply with status "rejected" and a short reason that suggests
+  what Present can do instead (blocking feeds, schedules, whitelisting creators).`;
 
 export type CompileResult =
   | { readonly kind: "compiled"; readonly policy: PresentPolicy }
@@ -24,10 +28,18 @@ const buildPrompt = (rawPrompt: string, existingPolicy: PresentPolicy | undefine
     ? `User intent:\n${rawPrompt}`
     : `Current policy (amend it, keep anything the user did not ask to change):\n${JSON.stringify(existingPolicy)}\n\nUser intent:\n${rawPrompt}`;
 
-const toResult = (output: CompilerOutput): CompileResult =>
-  output.status === "compiled"
+const NOTHING_TO_BLOCK =
+  "There's nothing for Present to block there. It always keeps DMs, search, subscriptions and profiles. Try blocking Reels, Shorts, Spotlight or a feed instead.";
+
+const blocksSomething = (policy: PresentPolicy): boolean =>
+  policy.rules.some((rule) => rule.target_surfaces.length > 0);
+
+const toResult = (output: CompilerOutput): CompileResult => {
+  if (output.status === "rejected") return { kind: "rejected", reason: output.reason };
+  return blocksSomething(output.policy)
     ? { kind: "compiled", policy: output.policy }
-    : { kind: "rejected", reason: output.reason };
+    : { kind: "rejected", reason: NOTHING_TO_BLOCK };
+};
 
 export const compilePolicy = async (options: {
   readonly rawPrompt: string;

@@ -69,6 +69,15 @@ describe("POST /v1/compile", () => {
     expect(calls[0]?.prompt).toContain("EXISTING-POLICY-MARKER");
   });
 
+  it("asks Gemini to compile the enforceable part of a mixed intent instead of rejecting all of it", async () => {
+    const { generate, calls } = fakeGemini({ status: "compiled", policy: aPolicy() });
+
+    await compile({ generate, body: { raw_prompt: "Block my Instagram DMs and Reels after 10 PM" } });
+
+    expect(calls[0]?.systemInstruction).toContain("Reject only when nothing in the intent can be enforced");
+    expect(calls[0]?.systemInstruction).toContain("never blocks direct messages");
+  });
+
   it("explains why an intent cannot be enforced on device", async () => {
     const reason = "We can't judge video quality without reading your screen. Whitelist creators instead.";
     const { generate } = fakeGemini({ status: "rejected", reason });
@@ -77,6 +86,38 @@ describe("POST /v1/compile", () => {
 
     expect(response.status).toBe(422);
     expect(await response.json()).toEqual({ status: "rejected", reason });
+  });
+
+  it("turns a compiled policy that blocks nothing into a clear explanation", async () => {
+    const blocksNothing = aPolicy({
+      summary: "I have kept your Instagram feed open.",
+      rules: [
+        {
+          platform: "instagram",
+          target_surfaces: [],
+          allowed_surfaces: ["direct_messages", "search"],
+          schedule: { mode: "always" },
+        },
+      ],
+    });
+    const { generate } = fakeGemini({ status: "compiled", policy: blocksNothing });
+
+    const response = await compile({ generate, body: { raw_prompt: "Block Instagram DMs" } });
+
+    expect(response.status).toBe(422);
+    expect(await response.json()).toEqual({
+      status: "rejected",
+      reason:
+        "There's nothing for Present to block there. It always keeps DMs, search, subscriptions and profiles. Try blocking Reels, Shorts, Spotlight or a feed instead.",
+    });
+  });
+
+  it("treats a policy with no rules at all as blocking nothing", async () => {
+    const { generate } = fakeGemini({ status: "compiled", policy: aPolicy({ rules: [] }) });
+
+    const response = await compile({ generate, body: { raw_prompt: "Block my messages" } });
+
+    expect(response.status).toBe(422);
   });
 
   it("refuses to pass on a policy that breaks the schema", async () => {
