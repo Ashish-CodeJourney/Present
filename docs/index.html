@@ -38,6 +38,215 @@
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
+<!-- Shared icons and gradients for the Reels / Shorts feed mockups (generic look-alike UI, no brand marks) -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.2 12 3.2l8.5 7V20.5h-5.6v-6H9.1v6H3.5z"/></symbol>
+    <symbol id="i-home-on" viewBox="0 0 24 24"><path d="M3.5 10.2 12 3.2l8.5 7V20.5h-5.6v-6H9.1v6H3.5z" fill="currentColor"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><path d="M12 7.8v8.4M7.8 12h8.4"/></symbol>
+    <symbol id="i-reels" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5"/><path d="M3 8.6h18M8.4 3l3 5.6M14.4 3l3 5.6"/><path d="M10 12.2v5.6l4.8-2.8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-reels-on" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5.5" fill="currentColor"/><path d="M3 8.6h18M8.4 3l3 5.6M14.4 3l3 5.6" stroke="#000" stroke-width="1.6"/><path d="M10 12.2v5.6l4.8-2.8z" fill="#000" stroke="none"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4s-7.6-4.5-9.3-9.3C1.6 7.9 3.6 4.6 7 4.6c2.1 0 3.6 1.1 5 2.9 1.4-1.8 2.9-2.9 5-2.9 3.4 0 5.4 3.3 4.3 6.5-1.7 4.8-9.3 9.3-9.3 9.3z"/></symbol>
+    <symbol id="i-heart-fill" viewBox="0 0 24 24"><path d="M12 20.4s-7.6-4.5-9.3-9.3C1.6 7.9 3.6 4.6 7 4.6c2.1 0 3.6 1.1 5 2.9 1.4-1.8 2.9-2.9 5-2.9 3.4 0 5.4 3.3 4.3 6.5-1.7 4.8-9.3 9.3-9.3 9.3z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 24 24"><path d="M20.4 16.4A9 9 0 1 0 16.6 20l4.4 1.1z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M21.5 3 2.8 9.2l7.4 3.4 3.4 7.6z"/><path d="M21.5 3 10.2 12.6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></g></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 9.2c0-1.4 1-2.4 2.4-2.4h2.2L9.3 4h5.4l1.7 2.8h2.2c1.4 0 2.4 1 2.4 2.4v8.4c0 1.4-1 2.4-2.4 2.4H5.4C4 20 3 19 3 17.6z"/><circle cx="12" cy="13.2" r="3.6"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+    <symbol id="i-dm" viewBox="0 0 24 24"><path d="M12 3a8.8 8.8 0 0 0-6.5 14.8L5 21l3.4-1.6A8.8 8.8 0 1 0 12 3z"/><path d="m7.6 13.8 3-3.4 2.3 2 3.5-3.6-3 3.4-2.3-2z" fill="currentColor"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M5.5 3.5h13v17L12 15l-6.5 5.5z"/></symbol>
+    <symbol id="i-shortplay" viewBox="0 0 24 24"><rect x="5.5" y="2.5" width="13" height="19" rx="4" fill="currentColor" stroke="none"/><path d="M10.4 9v6l4.6-3z" fill="#fff" stroke="none"/></symbol>
+
+    <linearGradient id="g-vig-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".3" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <radialGradient id="g-mist" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g-vig" cx=".5" cy=".46" r=".72"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>
+    <!-- wash -->
+    <linearGradient id="g-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd9e2"/><stop offset="1" stop-color="#9aaab8"/></linearGradient>
+    <linearGradient id="g-door" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3cc"/><stop offset=".12" stop-color="#eef2f5"/><stop offset="1" stop-color="#d6dde3"/></linearGradient>
+    <linearGradient id="g-drive" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7a49d"/><stop offset="1" stop-color="#6d6a64"/></linearGradient>
+    <linearGradient id="g-wet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b6a74"/><stop offset=".5" stop-color="#7d909c"/><stop offset="1" stop-color="#3d4a53"/></linearGradient>
+    <linearGradient id="g-car" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7b67"/><stop offset=".45" stop-color="#e33a3f"/><stop offset="1" stop-color="#8e1424"/></linearGradient>
+    <linearGradient id="g-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a9cde3"/><stop offset=".45" stop-color="#3b5266"/><stop offset="1" stop-color="#1c2633"/></linearGradient>
+    <linearGradient id="g-spray" gradientUnits="userSpaceOnUse" x1="62" y1="124" x2="30" y2="101"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#d8efff" stop-opacity=".15"/></linearGradient>
+    <!-- cat -->
+    <linearGradient id="g-room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3c5c56"/><stop offset=".7" stop-color="#22332f"/><stop offset="1" stop-color="#141c1a"/></linearGradient>
+    <radialGradient id="g-lamp" cx=".2" cy=".18" r=".6"><stop offset="0" stop-color="#ffd59a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd59a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-window" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d6"/><stop offset="1" stop-color="#ffc98a"/></linearGradient>
+    <linearGradient id="g-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe2b0" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-table" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4945c"/><stop offset="1" stop-color="#9c5a2e"/></linearGradient>
+    <linearGradient id="g-fur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb062"/><stop offset="1" stop-color="#c8641f"/></linearGradient>
+    <!-- noodles -->
+    <radialGradient id="g-izakaya" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="#5a3420"/><stop offset=".6" stop-color="#22140d"/><stop offset="1" stop-color="#0c0806"/></radialGradient>
+    <linearGradient id="g-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b3f22"/><stop offset="1" stop-color="#2e1a0e"/></linearGradient>
+    <radialGradient id="g-broth" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#ffc06a"/><stop offset=".7" stop-color="#d9772a"/><stop offset="1" stop-color="#8f4214"/></radialGradient>
+    <linearGradient id="g-bowl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d0d12"/><stop offset=".35" stop-color="#3b3b46"/><stop offset=".55" stop-color="#26262f"/><stop offset="1" stop-color="#09090c"/></linearGradient>
+    <linearGradient id="g-steam" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <!-- dance -->
+    <linearGradient id="g-club" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14062e"/><stop offset=".7" stop-color="#3a0d5c"/><stop offset="1" stop-color="#12031f"/></linearGradient>
+    <linearGradient id="g-beam-pink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff3fb4" stop-opacity=".75"/><stop offset="1" stop-color="#ff3fb4" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-beam-cyan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2fe6ff" stop-opacity=".7"/><stop offset="1" stop-color="#2fe6ff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="g-backlight" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff5fc8" stop-opacity=".85"/><stop offset=".5" stop-color="#9b3dff" stop-opacity=".35"/><stop offset="1" stop-color="#9b3dff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b47"/><stop offset="1" stop-color="#07020f"/></linearGradient>
+    <!-- sunset -->
+    <linearGradient id="g-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1d4e"/><stop offset=".3" stop-color="#5b3a8c"/><stop offset=".5" stop-color="#e2607e"/><stop offset=".62" stop-color="#ffa45c"/><stop offset=".64" stop-color="#ffcf87"/></linearGradient>
+    <radialGradient id="g-sunglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff4c8"/><stop offset=".22" stop-color="#ffd27a"/><stop offset=".5" stop-color="#ff8a4c" stop-opacity=".55"/><stop offset="1" stop-color="#ff6a5c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a4f7a"/><stop offset=".25" stop-color="#4a2c66"/><stop offset="1" stop-color="#0f0d2b"/></linearGradient>
+  </defs>
+</svg>
+
+<!-- Illustrated "video" clips for the feed mockups. data-* fills the Reels overlay. -->
+<template id="clip-wash" data-user="drivewaydaily" data-cap="1 hour of grime, gone in 60 seconds 💦" data-likes="48.2K" data-comments="1,204" data-shares="9,817" data-tint="#3d8bff">
+  <svg class="scene" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice">
+    <rect width="90" height="160" fill="url(#g-wall)"/>
+    <path d="M0 8h90M0 16h90M0 24h90" stroke="#7d8d9c" stroke-opacity=".4" stroke-width=".6"/>
+    <rect x="4" y="28" width="82" height="64" rx="1" fill="url(#g-door)"/>
+    <path d="M4 44h82M4 60h82M4 76h82" stroke="#b3bdc6" stroke-width="1.1"/>
+    <path d="M4 28h82v3H4z" fill="#000" opacity=".12"/>
+    <rect width="90" height="100" fill="url(#g-lamp)" opacity=".55"/>
+    <path d="M86 0v92" stroke="#8c99a5" stroke-width="2.2"/>
+    <rect y="92" width="90" height="68" fill="url(#g-drive)"/>
+    <path class="wash-clean" d="M0 124 90 114V160H0z" fill="url(#g-wet)"/>
+    <path d="M6 134h22M44 144h34M10 152h16M60 128h20" stroke="#e3f1fb" stroke-opacity=".45" stroke-width=".7" stroke-linecap="round"/>
+    <ellipse cx="45" cy="114" rx="42" ry="4.5" fill="#000" opacity=".35"/>
+    <path d="M5 108c0-7 3-10 10-11l11-1 8.5-9.5c2-2 4.5-3 7.5-3h18c4 0 7 2 9 5l5.5 7.5 6 1.8c4 1.2 6 4 6 8v3c0 2-1 3-3 3H8c-2 0-3-1-3-3z" fill="url(#g-car)"/>
+    <path d="M29 96 36.4 87.4c1-1.2 2.6-1.8 4.3-1.8H49V96z" fill="url(#g-glass)"/>
+    <path d="M51.5 96V85.6H59c3 0 5.2 1.1 7 3.6L71 96z" fill="url(#g-glass)"/>
+    <path d="M9 101.5h75" stroke="#fff" stroke-opacity=".45" stroke-width=".8"/>
+    <path d="M50.3 96v15" stroke="#6d0f1b" stroke-width=".5"/>
+    <path d="M83 101h3.6v2.6H83z" fill="#fff6cc"/>
+    <path class="wash-foam" d="M5 106c3-5 7-3 10-7 4 3 7-2 11 1 3 4 6 0 9 4 1 3 3 5 2 8H8c-2 0-3-1-3-3z" fill="#fbf8f1" opacity=".92"/>
+    <g fill="#fff"><circle cx="12" cy="104" r="1.4"/><circle cx="20" cy="101" r="1.1"/><circle cx="29" cy="104.5" r="1.3"/></g>
+    <circle cx="22" cy="112" r="7.6" fill="#141619"/><circle cx="22" cy="112" r="4.2" fill="#c3cad1"/><circle cx="22" cy="112" r="1.5" fill="#59616a"/>
+    <circle cx="71" cy="112" r="7.6" fill="#141619"/><circle cx="71" cy="112" r="4.2" fill="#c3cad1"/><circle cx="71" cy="112" r="1.5" fill="#59616a"/>
+    <g class="wash-wand">
+      <path d="M96 164 62 125" stroke="#26292d" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M76 141l6-2.4" stroke="#f2b705" stroke-width="4" stroke-linecap="round"/>
+      <path class="wash-cone" d="M62 125 27 98.5l9 9.5z" fill="url(#g-spray)"/>
+      <g class="wash-drops" fill="#fff">
+        <circle cx="61" cy="124" r=".8" style="--t:.1;--d:-.05s"/><circle cx="61" cy="125.5" r=".6" style="--t:.35;--d:-.2s"/>
+        <circle cx="60.5" cy="123.5" r=".7" style="--t:.6;--d:-.32s"/><circle cx="61.5" cy="125" r=".5" style="--t:.8;--d:-.41s"/>
+        <circle cx="61" cy="124.6" r=".9" style="--t:.5;--d:-.15s"/><circle cx="60.6" cy="126" r=".55" style="--t:.22;--d:-.27s"/>
+      </g>
+    </g>
+    <g class="wash-mist" fill="#fff"><ellipse cx="32" cy="103" rx="8" ry="5" fill="url(#g-mist)"/><circle cx="27" cy="99" r="1" /><circle cx="35" cy="98" r=".8"/><circle cx="30" cy="96.5" r=".6"/></g>
+    <rect width="90" height="160" fill="url(#g-vig)"/>
+  </svg>
+</template>
+<template id="clip-cat" data-user="mochi.the.menace" data-cap="He looked me in the eye first 😾" data-likes="312K" data-comments="4,889" data-shares="51.3K" data-tint="#ff9a3d" data-burst="1">
+  <svg class="scene" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice">
+    <rect width="90" height="160" fill="url(#g-room)"/>
+    <rect width="90" height="160" fill="url(#g-lamp)"/>
+    <rect x="54" y="10" width="32" height="48" rx="1.5" fill="url(#g-window)"/>
+    <path d="M70 10v48M54 34h32" stroke="#2f4540" stroke-width="1.8"/>
+    <path d="M54 58h32l-8 50H16z" fill="url(#g-beam)"/>
+    <rect x="12" y="32" width="22" height="16" rx="1" fill="#efe0bf"/><rect x="14.3" y="34.3" width="17.4" height="11.4" fill="#7fa3b5"/><path d="M14.3 45.7l5.6-5.6 3.8 3.3 2.8-2.3 5.2 4.6z" fill="#4c6e5b"/>
+    <rect y="138" width="90" height="22" fill="#121816"/>
+    <path d="M-2 100h72l4 4H-2z" fill="#e0a56c"/>
+    <rect x="-2" y="104" width="76" height="5" fill="url(#g-table)"/>
+    <rect x="60" y="109" width="4.5" height="40" fill="#6a3a1d"/>
+    <ellipse cx="38" cy="108.5" rx="36" ry="2" fill="#000" opacity=".25"/>
+    <path class="cat-tail" d="M19 99c-9 1-12-6-8-13" stroke="#e0832f" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    <path d="M26 100c-8 0-9.5-9-7-16 2.6-7.5 9-10.5 15-9 5.5 1.5 8.5 8 8.5 15.5 0 5.5-2 9.5-6.5 9.5z" fill="url(#g-fur)"/>
+    <ellipse cx="37.5" cy="88" rx="3.6" ry="7" fill="#ffe1c2"/>
+    <path d="M21.5 83.5c2.5 1 4.5.6 6-1M20.5 90c3 1 5.5.6 7-1.2M21 96c2.5.8 4.5.4 6-1" stroke="#b5561a" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <g class="cat-paw"><path d="M37 82c6 1.5 11 5 16 9.5" stroke="#f59b45" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="53.4" cy="91.6" r="1.9" fill="#ffd9bb"/></g>
+    <path d="M31 66.5 32.5 57l6.5 6.5zM40 63.5l6-6 1 9.5z" fill="#f59b45"/>
+    <circle cx="39" cy="70" r="8.2" fill="url(#g-fur)"/>
+    <path d="M33 66.6 33.8 60l3.6 3.8zM42.2 63.6l3.8-3.6.4 6.4z" fill="#ffc3a8"/>
+    <ellipse cx="41" cy="74" rx="4.2" ry="2.8" fill="#ffe1c2"/>
+    <ellipse cx="36.4" cy="69" rx="1.3" ry="1.8" fill="#1d3b1a"/><ellipse cx="42.6" cy="69" rx="1.3" ry="1.8" fill="#1d3b1a"/>
+    <circle cx="36.8" cy="68.4" r=".4" fill="#fff"/><circle cx="43" cy="68.4" r=".4" fill="#fff"/>
+    <path d="M38.9 72.2h1.5l-.75.85z" fill="#c45a6b"/>
+    <path d="M44 73.5l6-1M44 75l6 .6M34 73.5l-6-1M34 75l-6 .6" stroke="#fff" stroke-opacity=".7" stroke-width=".35"/>
+    <g class="cat-mug"><rect x="57" y="88" width="9" height="12" rx="1.6" fill="#f4f0e8"/><path d="M65.9 91.2c3.2 0 3.2 5.6 0 5.6" stroke="#f4f0e8" stroke-width="1.5" fill="none"/><rect x="57" y="88" width="9" height="2" rx="1" fill="#6b3d1f"/></g>
+    <rect width="90" height="160" fill="url(#g-vig)"/>
+  </svg>
+</template>
+<template id="clip-noodle" data-user="late.night.bowls" data-cap="2 AM ramen hits different 🍜" data-likes="96.4K" data-comments="2,031" data-shares="12.7K" data-tint="#e2563d">
+  <svg class="scene" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice">
+    <rect width="90" height="160" fill="url(#g-izakaya)"/>
+    <g fill="#ffb35c" opacity=".35"><circle cx="12" cy="22" r="5"/><circle cx="78" cy="14" r="4"/><circle cx="70" cy="40" r="2.5"/><circle cx="20" cy="48" r="2"/></g>
+    <rect y="104" width="90" height="56" fill="url(#g-wood)"/>
+    <path d="M0 116h90M0 132h90" stroke="#000" stroke-opacity=".2" stroke-width=".6"/>
+    <ellipse cx="45" cy="146" rx="38" ry="6" fill="#000" opacity=".45"/>
+    <ellipse cx="45" cy="112" rx="34" ry="9" fill="url(#g-broth)"/>
+    <ellipse cx="29" cy="110.5" rx="6.5" ry="3.2" fill="#fff8ee"/><ellipse cx="29.6" cy="110.5" rx="3.2" ry="1.8" fill="#f5a623"/>
+    <path d="M57 103.5l7 1-1.5 9-7-1z" fill="#1e2b20"/>
+    <g fill="#7bc74d"><ellipse cx="40" cy="116" rx="1.4" ry=".8"/><ellipse cx="50" cy="117" rx="1.2" ry=".7"/><ellipse cx="37" cy="106" rx="1.1" ry=".7"/><ellipse cx="66" cy="114" rx="1.3" ry=".7"/></g>
+    <ellipse cx="52" cy="108" rx="5" ry="2.4" fill="#f2c6b4"/><path d="M48 108a4 1.8 0 0 1 8 0" stroke="#c96f5a" stroke-width=".7" fill="none"/>
+    <g class="nd-lift">
+      <g stroke-linecap="round" fill="none" stroke-width="1.35">
+        <path d="M41 60c-2 12 4 22 0 34-1 8 2 18 0 30" stroke="#f6d58e"/>
+        <path d="M44 61c2 12-3 24 1 36 2 8-1 17 1 27" stroke="#eec06a"/>
+        <path d="M47 61c-1 13 4 22 0 36-1 9 3 16 1 27" stroke="#f8dc9a"/>
+        <path d="M50 62c3 12-2 22 2 34 2 9 0 18 1 28" stroke="#e9b85c"/>
+        <path d="M38.5 61c-3 14 2 24-2 36-1 9 1 17 0 27" stroke="#f3cf7a"/>
+        <path d="M52.5 63c-1 12 4 24 0 36" stroke="#f6d58e"/>
+      </g>
+      <path d="M36 64 86 4" stroke="#9a6532" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M43 66 92 12" stroke="#b5793d" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+    <path d="M11 112c2 23 19 34 34 34s32-11 34-34z" fill="url(#g-bowl)"/>
+    <path d="M17 124c6 10 16 15 28 15" stroke="#fff" stroke-opacity=".12" stroke-width="1.4" fill="none"/>
+    <ellipse cx="45" cy="112" rx="34" ry="9" fill="none" stroke="#4a4a56" stroke-width="1.6"/>
+    <g class="nd-steam" fill="none" stroke="url(#g-steam)" stroke-linecap="round" stroke-width="3.5">
+      <path d="M26 100c-4-8 4-13 0-22s3-13 0-20"/>
+      <path class="nd-steam--b" d="M62 98c4-8-4-13 0-22s-3-13 0-20"/>
+      <path class="nd-steam--c" d="M56 94c-3-7 3-11 0-18"/>
+    </g>
+    <rect width="90" height="160" fill="url(#g-vig)"/>
+  </svg>
+</template>
+<template id="clip-dance" data-user="neon.footwork" data-cap="Day 47 of learning this combo 🔁" data-likes="1.1M" data-comments="8,402" data-shares="77.9K" data-tint="#b34bff">
+  <svg class="scene" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice">
+    <rect width="90" height="160" fill="url(#g-club)"/>
+    <g fill="#ff9be0" opacity=".5"><circle cx="16" cy="40" r="1.6"/><circle cx="74" cy="34" r="1.2"/><circle cx="22" cy="96" r="1"/><circle cx="70" cy="90" r="1.4"/><circle cx="60" cy="24" r=".9"/></g>
+    <path class="dn-beam" d="M14 0-14 160h44z" fill="url(#g-beam-pink)"/>
+    <path class="dn-beam dn-beam--r" d="M76 0 60 160h44z" fill="url(#g-beam-cyan)"/>
+    <g class="dn-neon" fill="none">
+      <circle cx="45" cy="72" r="30" stroke="#ff3fb4" stroke-width="7" opacity=".22"/>
+      <circle cx="45" cy="72" r="30" stroke="#ff9be0" stroke-width="1.6"/>
+    </g>
+    <circle cx="45" cy="76" r="34" fill="url(#g-backlight)"/>
+    <rect y="120" width="90" height="40" fill="url(#g-floor)"/>
+    <path d="M45 120-40 160M45 120 130 160M45 120 15 160M45 120 75 160M0 128h90M0 140h90" stroke="#2fe6ff" stroke-opacity=".22" stroke-width=".6"/>
+    <ellipse class="dn-pool" cx="45" cy="123" rx="20" ry="3" fill="#ff3fb4" opacity=".45"/>
+    <g class="dn-body" fill="#06030c" stroke="#06030c" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="49.5" cy="45.5" rx="3" ry="2.6" stroke="none"/>
+      <circle cx="45.5" cy="50" r="5" stroke="none"/>
+      <path d="M43.5 54.5h3.5v4h-3.5z" stroke="none"/>
+      <g class="dn-arm-l" fill="none" stroke-width="3.8"><path d="M39.5 60.5 32 54.5l-5.5-11"/><circle cx="26.2" cy="42.2" r="1.9" fill="#06030c" stroke="none"/></g>
+      <g class="dn-arm-r" fill="none" stroke-width="3.8"><path d="M50.5 60.5l8.5 7.5 7.5-7"/><circle cx="67.2" cy="60.2" r="1.9" fill="#06030c" stroke="none"/></g>
+      <path d="M38.2 59.3c2.8-2.3 11.6-2.3 14.6 0l-1.6 13.5c-.4 4 .2 8 .8 11.2H39.5c.6-3.2 1.2-7.2.8-11.2z" stroke-width="1"/>
+      <g class="dn-leg-l" fill="none"><path d="M42 83l-5.5 17.5-2.4 18" stroke-width="5.4"/><ellipse cx="32.6" cy="120.4" rx="3.6" ry="1.7" fill="#06030c" stroke="none"/></g>
+      <g fill="none"><path d="M48.5 83l6.5 16.5 3.5 18.5" stroke-width="5.4"/><ellipse cx="60.4" cy="119.8" rx="3.6" ry="1.7" fill="#06030c" stroke="none"/></g>
+    </g>
+    <rect width="90" height="160" fill="url(#g-vig)"/>
+  </svg>
+</template>
+<template id="clip-sunset" data-user="skyclips" data-cap="6 hours of sky in 30 seconds 🌅" data-likes="203K" data-comments="3,115" data-shares="40.6K" data-tint="#ff8a3d">
+  <svg class="scene" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice">
+    <rect width="90" height="160" fill="url(#g-dusk)"/>
+    <g class="ss-sun"><circle cx="45" cy="88" r="30" fill="url(#g-sunglow)"/><circle cx="45" cy="88" r="8.5" fill="#fff3c9"/></g>
+    <g class="ss-clouds">
+      <g fill="#6d3a7e" opacity=".75"><ellipse cx="10" cy="49" rx="22" ry="3.4"/><ellipse cx="22" cy="46.5" rx="9" ry="3.2"/><ellipse cx="62" cy="35" rx="26" ry="2.8"/><ellipse cx="54" cy="32.8" rx="8" ry="2.6"/><ellipse cx="76" cy="63" rx="20" ry="2.4"/></g>
+      <g fill="#ff9fa8" opacity=".85"><ellipse cx="11" cy="51" rx="20" ry="1.4"/><ellipse cx="63" cy="36.8" rx="23" ry="1.1"/><ellipse cx="77" cy="64.6" rx="18" ry="1.1" fill="#ffd0a0"/></g>
+      <g fill="#8a4f8f" opacity=".5"><ellipse cx="30" cy="20" rx="30" ry="2"/><ellipse cx="85" cy="16" rx="18" ry="1.6"/></g>
+    </g>
+    <rect y="100" width="90" height="60" fill="url(#g-sea)"/>
+    <g class="ss-glint" stroke="#ffd59a" stroke-linecap="round"><path d="M40 102h10M36 105h18M38 109h7M47 109h9M33 114h11M48 114h8" stroke-width=".9"/><path d="M36 120h6M46 121h10M40 128h8M31 134h5M50 136h6" stroke-width=".7" opacity=".6"/></g>
+    <path d="M0 108h90M0 118h90M0 132h90M0 148h90" stroke="#fff" stroke-opacity=".05" stroke-width=".8"/>
+    <path d="M0 100c6-6 14-9 20-8 4 1 8 5 12 8z" fill="#1b0f2a"/>
+    <path d="M70 100c3-3 8-5 20-6v6z" fill="#1b0f2a"/>
+    <path d="M78 99c0-12 1-20 3-28" stroke="#1b0f2a" stroke-width="1.4" fill="none"/>
+    <path d="M81 71c-5-1-9 1-11 4m11-4c4-3 9-2 11 1m-11-1c-2 3-6 5-9 5m9-5c3 1 6 4 6 7" stroke="#1b0f2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <rect class="ss-night" width="90" height="160" fill="#0b0a2a"/>
+    <rect width="90" height="160" fill="url(#g-vig)"/>
+  </svg>
+</template>
+
 <header class="site-header" id="siteHeader">
   <div class="container site-header__inner">
     <a class="brand" href="#top" aria-label="Present, back to top">
@@ -97,9 +306,7 @@
               <span class="bubble">did you see this? 😂</span>
             </div>
             <div class="mini-phone__reels">
-              <div class="reel-strip">
-                <div class="reel r1">🚗</div><div class="reel r2">🐶</div><div class="reel r3">🍜</div><div class="reel r4">💅</div><div class="reel r5">🎮</div><div class="reel r1">🚗</div>
-              </div>
+              <div class="feed feed--mini" data-clips="wash cat noodle dance sunset"></div>
               <span class="timer-chip">⏱ <b id="welcomeTimer">1</b> min</span>
             </div>
           </div>
@@ -125,22 +332,19 @@
     </header>
     <div class="scrolly">
       <div class="scrolly__stage">
-        <div class="phone phone--trap" data-state="dm" id="trapPhone" role="img" aria-label="An illustrated phone that changes as you read: a DM, then auto-scrolling Reels, then a clock reaching 40 minutes, then a blocker that locks the whole app.">
+        <div class="phone phone--trap" data-state="dm" id="trapPhone" role="img" aria-label="An illustrated phone that changes as you read: a DM from Dhruvi sharing a Reel, then the Reels feed auto-scrolling from a car being power-washed to a cat, ramen, a dancer and a sunset, then a clock reaching 40 minutes, then a blocker that locks the whole app.">
           <div class="phone__screen trap-screen">
             <div class="ts ts--dm">
-              <div class="ig-head"><span class="avatar">R</span><b>Dhruvi.k</b><span class="muted">Active now</span></div>
+              <div class="ig-head"><span class="avatar">D</span><b>Dhruvi.k</b><span class="muted">Active now</span></div>
               <div class="ig-thread">
                 <span class="bubble bubble--in">did you see this? 😂</span>
-                <span class="share-card"><span class="share-card__thumb">🚗</span><span>Reel · @drivewaydaily</span></span>
+                <span class="share-card"><span class="share-card__thumb" data-scene="wash"><svg class="ic share-card__ic" aria-hidden="true"><use href="#i-reels"/></svg></span><span>Reel · @drivewaydaily</span></span>
                 <span class="bubble bubble--out">opening it now</span>
               </div>
               <div class="ig-input">Message…</div>
             </div>
             <div class="ts ts--reels">
-              <div class="reel-strip reel-strip--fast">
-                <div class="reel r1">🚗</div><div class="reel r2">🐶</div><div class="reel r3">🍜</div><div class="reel r4">💅</div><div class="reel r5">🎮</div><div class="reel r6">🏋️</div><div class="reel r1">🚗</div>
-              </div>
-              <span class="reel-ui">♥ 12.4k<br>💬 318<br>↗</span>
+              <div class="feed" id="trapFeed" data-clips="wash cat noodle dance sunset"></div>
             </div>
             <div class="ts ts--clock">
               <div class="clock-wrap">
@@ -360,12 +564,19 @@
         <p>An on-device accessibility engine bounces you out of Reels while DMs stay open. Blocking runs entirely on your phone, so it keeps working offline. Only writing new rules with Gemini needs internet.</p>
         <div class="demo demo--phone" aria-hidden="true">
           <div class="mini-app" id="miniApp" data-view="home">
-            <div class="mini-app__view mv-home"><span class="mv-title">Instagram</span><span class="post"></span><span class="post post--short"></span></div>
-            <div class="mini-app__view mv-reels"><span class="big-emoji">🐶</span></div>
-            <div class="mini-app__view mv-dms"><span class="mv-title">Messages</span><span class="bubble bubble--in">did you see this? 😂</span><span class="bubble bubble--out">haha yes 😂</span></div>
+            <div class="mini-app__view mv-home">
+              <div class="ig-bar"><b>Instagram</b><svg class="ic"><use href="#i-heart"/></svg><svg class="ic nav-dms"><use href="#i-dm"/></svg></div>
+              <div class="ig-stories"><i><b>Your story</b></i><i class="is-new"><b>dhruvi.k</b></i><i class="is-new"><b>arjun_</b></i><i><b>meera.s</b></i></div>
+              <div class="ig-post"><p class="ig-post__who"><i></i><b>skyclips</b><svg class="ic"><use href="#i-more"/></svg></p><div class="ig-post__img" data-scene="sunset"></div><p class="ig-post__acts"><svg class="ic"><use href="#i-heart"/></svg><svg class="ic"><use href="#i-comment"/></svg><svg class="ic"><use href="#i-share"/></svg><svg class="ic ig-post__save"><use href="#i-bookmark"/></svg></p></div>
+            </div>
+            <div class="mini-app__view mv-reels"><div class="feed feed--bare" data-clips="dance"></div></div>
+            <div class="mini-app__view mv-dms">
+              <div class="ig-bar ig-bar--dm"><svg class="ic"><use href="#i-back"/></svg><i class="ig-av"></i><p><b>Dhruvi</b><span>Active now</span></p></div>
+              <span class="bubble bubble--in">did you see this? 😂</span><span class="bubble bubble--out">haha yes 😂</span>
+            </div>
             <div class="mini-app__toast mini-app__toast--block">✕ Reels closed · 96 ms</div>
             <div class="mini-app__toast mini-app__toast--allow">✓ DMs allowed</div>
-            <nav class="mini-app__nav"><span>🏠</span><span>🔍</span><span class="nav-reels">▶️</span><span class="nav-dms">💬</span></nav>
+            <nav class="mini-app__nav"><svg class="ic nav-home"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-plus"/></svg><svg class="ic nav-reels"><use href="#i-reels"/></svg><i class="ig-me"></i></nav>
             <span class="tap" id="tapDot"></span>
           </div>
         </div>
@@ -638,7 +849,16 @@
       <div class="browser__bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span></div>
       <div class="browser__body">
         <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
-        <div class="yt-shorts"><span class="yt-shorts__cards"><i></i><i></i><i></i><i></i></span><span class="yt-shorts__hidden">🌅 Shorts hidden by Present</span></div>
+        <div class="yt-shorts">
+          <p class="yt-shorts__head"><svg class="ic"><use href="#i-shortplay"/></svg>Shorts</p>
+          <div class="yt-shorts__cards">
+            <span class="yt-short"><span class="yt-short__thumb" data-scene="wash"></span><b>1 hour of grime, gone in 60 seconds</b><small>2.1M views</small></span>
+            <span class="yt-short"><span class="yt-short__thumb" data-scene="cat"></span><b>He looked me in the eye first</b><small>8.4M views</small></span>
+            <span class="yt-short"><span class="yt-short__thumb" data-scene="noodle"></span><b>2 AM ramen hits different</b><small>960K views</small></span>
+            <span class="yt-short"><span class="yt-short__thumb" data-scene="dance"></span><b>Day 47 of learning this combo</b><small>3.3M views</small></span>
+          </div>
+          <span class="yt-shorts__hidden">🌅 Shorts hidden by Present</span>
+        </div>
         <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
       </div>
     </div>

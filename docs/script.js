@@ -143,11 +143,50 @@
     }, 0);
   };
 
+  /* Reels-style feed mockups: illustrated clips from <template id="clip-*"> plus a look-alike overlay */
+  const icon = (id, cls = "") => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+  const sceneOf = (name) => {
+    const tpl = document.getElementById(`clip-${name}`);
+    return tpl ? tpl.content.cloneNode(true) : document.createDocumentFragment();
+  };
+  const clipOf = (name) => {
+    const d = (document.getElementById(`clip-${name}`) || { dataset: {} }).dataset;
+    const audio = `♫ ${d.user} · Original audio`;
+    const clip = document.createElement("div");
+    clip.className = `clip clip--${name}`;
+    clip.style.setProperty("--tint", d.tint);
+    clip.innerHTML = `<div class="clip__scene"></div>${d.burst ? `<i class="burst">${icon("heart-fill")}</i>` : ""}
+      <div class="rail"><span class="rail__like">${icon("heart")}${icon("heart-fill", "ic--liked")}<b>${d.likes}</b></span><span>${icon("comment")}<b>${d.comments}</b></span><span>${icon("share")}<b>${d.shares}</b></span><span class="rail__more">${icon("more")}</span><i class="rail__audio"></i></div>
+      <div class="meta"><p class="meta__who"><i class="meta__av"></i><b>${d.user}</b><span class="meta__follow">Follow</span></p><p class="meta__cap">${d.cap}<span> … more</span></p><p class="meta__audio"><span class="meta__tick">${audio}<span>${audio}</span></span></p></div>`;
+    clip.firstElementChild.append(sceneOf(name));
+    return clip;
+  };
+  const initFeeds = () => {
+    $$("[data-scene]").forEach((el) => el.prepend(sceneOf(el.dataset.scene)));
+    $$(".feed").forEach((feed) => {
+      const names = feed.dataset.clips.split(" ");
+      const track = document.createElement("div");
+      track.className = "feed__track";
+      track.append(...names.map(clipOf));
+      if (names.length > 1) track.append(clipOf(names[0]));
+      const view = document.createElement("div");
+      view.className = "feed__view";
+      view.append(track);
+      feed.append(view);
+      feed.insertAdjacentHTML("beforeend", `<div class="feed__top"><b>Reels</b>${icon("chev")}${icon("camera", "feed__cam")}</div>
+        <div class="feed__bar"><i></i></div>
+        <nav class="feed__nav">${icon("home")}${icon("search")}${icon("plus")}${icon("reels-on")}<i class="feed__me"></i></nav>`);
+      observeVisibility(feed, (visible) => feed.classList.toggle("is-off", !visible), 0);
+    });
+  };
+  const setFeedLive = (feed, on) => feed && feed.classList.toggle("is-live", on && !reduced);
+
   /* Hero phone: the onboarding welcome screen */
   const initWelcome = () => {
     const screen = $("#welcomeDemo");
     const timer = $("#welcomeTimer");
     if (!screen) return;
+    const feed = $(".feed", screen);
     if (reduced) {
       screen.classList.add("p1", "p2");
       timer.textContent = "40";
@@ -157,11 +196,13 @@
       screen.classList.remove("p1", "p2");
       timer.textContent = "1";
       await wait(900);
+      setFeedLive(feed, false);
       if (!alive()) return;
       screen.classList.add("p1");
       await wait(1600);
       if (!alive()) return;
       screen.classList.add("p2");
+      setFeedLive(feed, true);
       await tween({ from: 1, to: 40, duration: 7000, alive, onUpdate: (v) => { timer.textContent = String(Math.round(v)); } });
       await wait(1800);
     }, 0.2);
@@ -191,6 +232,7 @@
     const setState = (state) => {
       if (phone.dataset.state === state) return;
       phone.dataset.state = state;
+      setFeedLive($("#trapFeed"), state === "reels");
       steps.forEach((s) => s.classList.toggle("is-current", s.dataset.step === state));
       if (state === "clock") runClock();
     };
@@ -912,6 +954,7 @@
   };
 
   initHero();
+  initFeeds();
   initWelcome();
   initTrap();
   initCalculator();
