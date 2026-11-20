@@ -4,9 +4,7 @@
 
 Present is a precision cognitive firewall for your phone and browser. You say what you want in plain words, for example *"Keep my Instagram DMs and YouTube subscriptions, but kill Reels and Shorts after 9 PM"*. Gemini compiles that sentence into a typed policy, you review it, and your phone enforces it on-device. Reels, Shorts, TikTok and Snapchat Spotlight go away; DMs, search and subscriptions stay.
 
-Built for the **Google Startup Buildathon** by team **Hello Human**. Website: <https://ashish-codejourney.github.io/MindGuard/>
-
-> Present grew out of MindGuard, an on-device Reels/Shorts blocker. The Android package id is still `com.mindguard`, and the repo may still carry the old name.
+Website: <https://present-web-283760043967.asia-south1.run.app> · Download: [latest release](https://github.com/Ashish-CodeJourney/Present/releases/latest)
 
 ---
 
@@ -29,7 +27,7 @@ Most blockers are all-or-nothing: they lock the whole app. You need one DM, unbl
 
 ### Intent to policy, with Gemini
 
-Type an intent (or tap an example chip) and tap **Compile with Gemini**. The Cloud Run compiler returns either a policy or a plain-language reason it can't be enforced. The **review screen** shows a summary, green chips for what stays usable, red chips for what gets blocked, and the schedule. Nothing is enforced until you tap **Activate**. Gemini also gets your current policy, so you can make changes like "also block Snapchat Spotlight".
+Type an intent (or tap an example chip) and tap **Compile with Gemini**. Gemini returns either a policy or a plain-language reason it can't be enforced. The **review screen** shows a summary, green chips for what stays usable, red chips for what gets blocked, and the schedule. Nothing is enforced until you tap **Activate**. Gemini also gets your current policy, so you can make changes like "also block Snapchat Spotlight".
 
 ### Animated onboarding
 
@@ -80,63 +78,6 @@ The desktop half lives in [`extension/`](extension/README.md). On youtube.com it
 
 ---
 
-## Architecture
-
-```mermaid
-flowchart LR
-    subgraph Phone["Android app (Kotlin, Compose)"]
-        UI[Intent + Review screens] --> Store[(PolicyStore<br/>DataStore JSON)]
-        Store --> Svc[Accessibility Service]
-        Svc --> Eval[PolicyEvaluator<br/>shared/ pure Kotlin]
-    end
-    subgraph Chrome["Chrome MV3 extension"]
-        Popup[Popup] --> Sync[(chrome.storage.sync)]
-        Sync --> CS[Content script<br/>CSS hide + redirects]
-    end
-    subgraph GCP["Google Cloud"]
-        Run[Cloud Run: present-compiler<br/>Hono + @google/genai + Zod]
-        SM[(Secret Manager<br/>GEMINI_API_KEY, PRESENT_API_KEY)]
-        SM --> Run
-    end
-    Gemini[Gemini API<br/>structured output]
-
-    UI -- "POST /v1/compile, /v1/insights<br/>x-present-key" --> Run
-    Popup -- "POST /v1/compile" --> Run
-    Run <--> Gemini
-```
-
-- **Compile online, enforce offline.** The network is only used to compile an intent and to fetch an insight. Each block decision is made on the device by `PolicyEvaluator.shouldEnforce(policy, package, surface, minuteOfDay)`, which supports `always` and `time_window` schedules, including overnight windows such as 21:00 to 06:00.
-- **Compiler service** ([`server/`](server/README.md)): `POST /v1/compile`, `POST /v1/insights`, `GET /health`. It is live at `https://present-compiler-283760043967.asia-south1.run.app` (region `asia-south1`). Both keys come from Secret Manager. It calls Gemini with an AI Studio key, not Vertex AI, because Vertex rejected the newer Gemini models on a trial billing account. With a paid account it can switch to Vertex with `GOOGLE_GENAI_USE_VERTEXAI=true`. Models are tried in a fallback chain (`GEMINI_MODELS`, default `gemini-3.1-flash-lite,gemini-3.5-flash`) with a 6 s timeout each.
-
-### Policy schema
-
-The schema is defined once in Zod ([`server/src/policy.ts`](server/src/policy.ts)). It is exported to JSON Schema and passed to Gemini as `responseJsonSchema`. The extension imports the same file, and Kotlin mirrors it in [`shared/.../policy/PresentPolicy.kt`](shared/src/commonMain/kotlin/com/mindguard/shared/policy/PresentPolicy.kt).
-
-```json
-{
-  "policy_version": "1.0",
-  "summary": "Instagram DMs stay open. Reels are blocked from 9 PM to 6 AM.",
-  "rules": [{
-    "platform": "instagram",
-    "target_surfaces": ["reels_tab"],
-    "allowed_surfaces": ["direct_messages", "search"],
-    "schedule": { "mode": "time_window", "start_time": "21:00", "end_time": "06:00" }
-  }],
-  "pause_card_settings": { "delay_seconds": 10, "side_quest_category": "hydration" }
-}
-```
-
-| Field | Values |
-| --- | --- |
-| `platform` | `instagram`, `youtube`, `tiktok`, `snapchat`, `reddit`, `linkedin` |
-| `target_surfaces` | `reels_tab`, `shorts_player`, `home_feed`, `explore_grid`, `spotlight` |
-| `allowed_surfaces` | `direct_messages`, `search`, `subscriptions`, `profile`, `creator_channel` |
-| `schedule.mode` | `always`, `time_window` (`start_time`/`end_time` HH:MM), `daily_allowance` (`daily_limit_minutes`) |
-
-If an intent can't be enforced, the compiler returns `{ "status": "rejected", "reason": "..." }` instead of a policy.
-
----
-
 ## Privacy
 
 | | |
@@ -144,22 +85,9 @@ If an intent can't be enforced, the compiler returns `{ "status": "rejected", "r
 | **Read on the device** | Only inside Instagram, YouTube, TikTok and Snapchat (the accessibility scope is limited to these packages): the view tree of the current screen (resource IDs, class names, labels) so the app can tell which screen is open. It is processed in memory and is not stored or sent anywhere. |
 | **Never read** | Anything in other apps, screen pixels and your photos. |
 | **Stored on the device** | Your active policy, onboarding answers, block counts and streaks (DataStore). |
-| **Leaves the device** | (1) The intent text you compile, plus your current policy so Gemini can edit it. (2) If you tap **Get my weekly insight**: aggregate counts only (intercepts per app, total intercepts, streak days). Both go to the Present compiler on Cloud Run and from there to Gemini. |
+| **Leaves the device** | (1) The intent text you compile, plus your current policy so Gemini can edit it. (2) If you tap **Get my weekly insight**: aggregate counts only (intercepts per app, total intercepts, streak days). Both go to Present's server and from there to Gemini. Present's server doesn't store or log them. |
 
 There are no accounts and no analytics. Calls are authenticated with a shared `x-present-key` header (there is no per-user auth yet).
-
----
-
-## Google tech used
-
-| Technology | Use |
-| --- | --- |
-| **Gemini API** (`@google/genai`, structured output with a JSON Schema) | Intent → policy compiler; weekly insight |
-| **Cloud Run** | Hosts the `present-compiler` service (built from source with Cloud Build into Artifact Registry) |
-| **Secret Manager** | Holds `GEMINI_API_KEY` and `PRESENT_API_KEY` for Cloud Run |
-| **Android** (Accessibility Service, Quick Settings tile, Usage Stats, Jetpack Compose, DataStore) | On-device enforcement and the app |
-| **Chrome** (Manifest V3) | Desktop extension |
-| **Kotlin Multiplatform** | Pure, JVM-testable policy engine and detection rules in `shared/` |
 
 ---
 
@@ -246,20 +174,13 @@ The project is built test-first (TDD). Logic lives in pure functions and is test
 
 ## Roadmap
 
-From [`plans/`](plans/):
-
-- Enforce `daily_allowance` with real per-minute usage tracking, on Android and in the extension
-- Enforce `whitelisted_entities` (allowed creators and channels)
-- Per-user auth (Firebase Auth) instead of the shared `x-present-key`
-- Move Gemini calls to Vertex AI with the service account (no stored Gemini key) once billing allows
-- Feed the onboarding baseline into the weekly insight ("down 42% from your starting 1 h 48 m") and weight turn-off quests by what you said you'd do with the time
-- Home progress against your projection ("You've reclaimed 3 h 20 m of your 6.3 years")
+- **Daily allowances**: "20 minutes of Reels a day, then blocked", tracked minute by minute
+- **Allowed creators**: keep specific channels and creators while the rest of the feed stays blocked
+- **Accounts and sync**: one set of rules across your phone and browser
+- **Progress you can see**: "down 42% from your starting 1 h 48 m" on Home and in the weekly insight
+- **Smarter quests**: turn-off quests weighted by what you said you'd do with the time
 
 ---
-
-## Team
-
-**Hello Human**: Jay Dobariya, Ashish Vaghela, Dhruvi Jha.
 
 ## Licence
 

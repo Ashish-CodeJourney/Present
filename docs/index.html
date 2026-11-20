@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Present">
 <meta property="og:title" content="Present: Keep the people. Lose the feed.">
-<meta property="og:description" content="Say what you want from your phone. Gemini turns it into rules. Reels and Shorts go; DMs, search and subscriptions stay. By Team Hello Human.">
+<meta property="og:description" content="Say what you want from your phone. Gemini turns it into rules. Reels and Shorts go; DMs, search and subscriptions stay.">
 <meta property="og:url" content="https://ashish-codejourney.github.io/Present/">
 <meta property="og:image" content="https://ashish-codejourney.github.io/Present/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -49,7 +49,6 @@
       <a href="#how">How it works</a>
       <a href="#screens">The app</a>
       <a href="#privacy">Privacy</a>
-      <a href="#google">Built with Google</a>
     </nav>
     <a class="btn btn--primary btn--sm" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the app</a>
   </div>
@@ -74,7 +73,7 @@
 
   <div class="container hero__grid">
     <div class="hero__copy">
-      <p class="eyebrow"><span class="dot"></span> Google Startup Buildathon · Team Hello Human</p>
+      <p class="eyebrow"><span class="dot"></span> For Android · Chrome extension</p>
       <h1 id="hero-title">Keep the people.<br><span class="grad">Lose the feed.</span></h1>
       <p class="lede">Present is a precision cognitive firewall for Android and Chrome. Say what you want in plain words. <strong>Gemini</strong> turns it into rules, and your phone quietly closes Reels and Shorts in about 100&nbsp;ms. Your DMs, search and subscriptions keep working.</p>
       <div class="cta-row">
@@ -82,7 +81,7 @@
         <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
       </div>
       <ul class="hero__facts">
-        <li><b>Gemini</b> on Cloud Run</li>
+        <li><b>Gemini</b> powered</li>
         <li><b>~100 ms</b> on-device</li>
         <li><b>0</b> screen data sent</li>
       </ul>
@@ -179,12 +178,10 @@
           <p class="step__time">The next day</p>
           <h3>So you install a blocker. It blocks everything.</h3>
           <p>Lock the whole app and you lose the DM too. You unblock it "just for a minute", and the block is dead.</p>
-          <p class="stat"><span class="stat__num">87%</span> of users bypass or uninstall blunt app blockers within the first week.<sup><a href="#note-87" id="ref-87" aria-label="Note about this figure">*</a></sup></p>
           <p class="step__turn">Present takes a different path: <b class="mint">keep the DM</b>, <b class="coral">lose the Reel</b>.</p>
         </li>
       </ol>
     </div>
-    <p class="footnote" id="note-87">* The 87% figure comes from the Hello Human product brief (PRD). It is a framing estimate, not a peer-reviewed result. The studies we rely on for our maths are in <a href="#research">The research</a>.</p>
   </div>
 </section>
 
@@ -340,7 +337,7 @@
       <li class="how-card reveal" id="howCompile">
         <span class="how-card__n">2</span>
         <h3>Gemini compiles it</h3>
-        <p>Gemini on Cloud Run returns strict JSON against our schema. You review it as chips.</p>
+        <p>Gemini turns your words into a strict rule set. You review it as chips before anything changes.</p>
         <div class="demo demo--json" aria-hidden="true">
           <pre class="json"><code id="jsonOut"></code></pre>
           <div class="policy-chips" id="policyChips">
@@ -578,39 +575,6 @@
   </div>
 </section>
 
-<!-- 8. BUILT WITH GOOGLE -->
-<section class="google section light" id="google" aria-labelledby="google-title">
-  <div class="container">
-    <header class="section-head reveal">
-      <p class="kicker">Built with Google</p>
-      <h2 id="google-title">Gemini writes the rules. The phone keeps them.</h2>
-    </header>
-    <div class="arch reveal" role="img" aria-label="Architecture: the Android app and the Chrome extension send a one-line intent to the present-compiler service on Cloud Run. It reads its keys from Secret Manager and asks Gemini for structured output. A typed policy JSON comes back, and each client enforces it locally.">
-      <div class="arch__col">
-        <div class="node node--client"><span class="node__ico">📱</span><b>Android app</b><span>Intent → Review → Accessibility engine</span></div>
-        <div class="node node--client"><span class="node__ico">🧩</span><b>Chrome MV3</b><span>Popup + content script</span></div>
-      </div>
-      <div class="link"><span class="link__lbl">one-line intent</span><span class="link__line"></span><span class="link__lbl link__lbl--back">policy JSON</span></div>
-      <div class="arch__col">
-        <div class="node node--run"><span class="node__ico">☁️</span><b>Cloud Run</b><span>present-compiler · Hono + Zod</span></div>
-        <div class="link link--v"><span class="link__line"></span></div>
-        <div class="node node--secret"><span class="node__ico">🔐</span><b>Secret Manager</b><span>API keys, never in code</span></div>
-      </div>
-      <div class="link"><span class="link__lbl">JSON schema</span><span class="link__line"></span><span class="link__lbl link__lbl--back">structured output</span></div>
-      <div class="arch__col">
-        <div class="node node--gemini"><span class="node__ico">✨</span><b>Gemini</b><span>flash-lite → flash fallback, 6 s each</span></div>
-      </div>
-    </div>
-    <ul class="stack">
-      <li class="stack__item reveal"><h3>Gemini, structured output</h3><p>We send the Zod policy schema as <code>responseJsonSchema</code>, so the answer is always a typed policy, or a clear "rejected" with a reason.</p></li>
-      <li class="stack__item reveal"><h3>Cloud Run</h3><p>A small TypeScript service in <code>asia-south1</code>, with a model fallback chain so a busy model never stalls you.</p></li>
-      <li class="stack__item reveal"><h3>Secret Manager</h3><p>The Gemini key and the app key live in Secret Manager and are mounted at runtime.</p></li>
-      <li class="stack__item reveal"><h3>Android Accessibility</h3><p>On-device detection by class name and resource ID. Bounces you out of Reels and Shorts in about 100 ms, offline.</p></li>
-      <li class="stack__item reveal"><h3>Chrome MV3</h3><p>The same schema, imported from the server. Injected CSS and a MutationObserver hide Shorts and Reels on the web.</p></li>
-    </ul>
-  </div>
-</section>
-
 <!-- 9. RESEARCH -->
 <section class="research section" id="research" aria-labelledby="research-title">
   <div class="container">
@@ -656,7 +620,7 @@
   </div>
 </section>
 
-<!-- 10. CHROME + TEAM -->
+<!-- 10. CHROME + FINAL CTA -->
 <section class="chrome section light" id="chrome" aria-labelledby="chrome-title">
   <div class="container chrome__grid">
     <div class="reveal">
@@ -681,20 +645,11 @@
   </div>
 </section>
 
-<section class="team section" id="team" aria-labelledby="team-title">
+<section class="team section" id="get" aria-labelledby="final-title">
   <div class="container">
-    <header class="section-head reveal">
-      <p class="kicker">Team Hello Human</p>
-      <h2 id="team-title">Three people who'd rather you were out there.</h2>
-    </header>
-    <ul class="team__grid">
-      <li class="member reveal"><span class="member__av" aria-hidden="true">JD</span><h3>Jay Dobariya</h3><p>Android engine &amp; app</p></li>
-      <li class="member reveal"><span class="member__av" aria-hidden="true">AV</span><h3>Ashish Vaghela</h3><p>Gemini compiler, Cloud Run &amp; integration</p></li>
-      <li class="member reveal"><span class="member__av" aria-hidden="true">DJ</span><h3>Dhruvi Jha</h3><p>Chrome extension, design &amp; pitch</p></li>
-    </ul>
     <div class="final reveal">
       <img src="assets/logo.svg" alt="" width="72" height="72">
-      <p class="final__h">Go call someone you miss.</p>
+      <h2 class="final__h" id="final-title">Go call someone you miss.</h2>
       <div class="cta-row cta-row--center">
         <a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the Android app</a>
         <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
@@ -707,7 +662,7 @@
 <footer class="footer">
   <div class="container footer__inner">
     <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Present</span></a>
-    <p>Made by Team Hello Human for the Google Startup Buildathon. Open source under the <a href="https://github.com/Ashish-CodeJourney/Present/blob/main/LICENSE">MIT licence</a>.</p>
+    <p>Present is open source under the <a href="https://github.com/Ashish-CodeJourney/Present/blob/main/LICENSE">MIT licence</a>.</p>
     <p><a href="https://github.com/Ashish-CodeJourney/Present">GitHub</a> · <a href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Releases</a> · <a href="#research">Sources</a></p>
   </div>
 </footer>
