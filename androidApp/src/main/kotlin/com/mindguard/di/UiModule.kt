@@ -11,5 +11,5 @@ val uiModule = module {
     single<CompilerClient> {
         HttpCompilerClient(baseUrl = BuildConfig.PRESENT_API_URL, apiKey = BuildConfig.PRESENT_API_KEY)
     }
-    viewModel { MainViewModel(get(), get(), get()) }
+    viewModel { MainViewModel(get(), get(), get(), get()) }
 }

@@ -1,25 +1,44 @@
 package com.mindguard.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mindguard.shared.policy.PolicyRule
 import com.mindguard.shared.policy.PresentPolicy
+import com.mindguard.ui.components.ChipTone
+import com.mindguard.ui.components.EmojiBadge
+import com.mindguard.ui.components.NightSurface
+import com.mindguard.ui.components.OutlinePillButton
+import com.mindguard.ui.components.PresentCard
+import com.mindguard.ui.components.Staggered
+import com.mindguard.ui.components.SunrisePillButton
+import com.mindguard.ui.components.SurfaceChip
 import com.mindguard.ui.present.allowedSurfaceLabel
 import com.mindguard.ui.present.blockedSurfaceLabel
 import com.mindguard.ui.present.platformEmoji
 import com.mindguard.ui.present.platformName
 import com.mindguard.ui.present.scheduleLabel
+import com.mindguard.ui.theme.PresentMotion
+import com.mindguard.ui.theme.PresentPalette
+import com.mindguard.ui.theme.PresentType
+
+private const val CHIP_BASE_DELAY_MS = 220
 
 @Composable
 fun ReviewScreen(
@@ -30,34 +49,40 @@ fun ReviewScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(PresentColors.Background)
-            .padding(20.dp)
+            .background(PresentPalette.Cream)
+            .padding(horizontal = 20.dp)
     ) {
         Column(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Text("Review your policy", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = PresentColors.Ink)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                "Nothing changes until you tap Activate.",
-                fontSize = 14.sp,
-                color = PresentColors.Muted
-            )
+            Spacer(modifier = Modifier.height(28.dp))
+            Staggered(index = 0) {
+                Column {
+                    Text("Review your policy", style = PresentType.Headline, color = PresentPalette.Ink)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "Nothing changes until you tap Activate.",
+                        style = PresentType.Body,
+                        color = PresentPalette.InkMuted
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = PresentColors.Primary)
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text("✨ Gemini understood", fontSize = 13.sp, color = Color.White.copy(alpha = 0.8f))
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(policy.summary, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White, lineHeight = 24.sp)
+            Staggered(index = 1) {
+                NightSurface {
+                    Text("✨ Gemini understood", style = PresentType.Label, color = PresentPalette.SunriseSoft)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(policy.summary, style = PresentType.Title, color = PresentPalette.OnNight)
+                    Spacer(modifier = Modifier.height(14.dp))
+                    SurfaceChip(
+                        text = "${policy.rules.size} ${if (policy.rules.size == 1) "rule" else "rules"}",
+                        tone = ChipTone.Night,
+                        appearDelayMs = CHIP_BASE_DELAY_MS
+                    )
                 }
             }
 
@@ -66,118 +91,85 @@ fun ReviewScreen(
             if (policy.rules.isEmpty()) {
                 Text(
                     "This policy has no rules yet. Tap Edit to describe what to block.",
-                    fontSize = 14.sp,
-                    color = PresentColors.Muted
+                    style = PresentType.Body,
+                    color = PresentPalette.InkMuted
                 )
             }
 
-            policy.rules.forEach { rule ->
-                RuleCard(rule)
+            policy.rules.forEachIndexed { index, rule ->
+                Staggered(index = index + 2) {
+                    RuleCard(rule = rule, chipDelayMs = CHIP_BASE_DELAY_MS + index * PresentMotion.StaggerMs * 3)
+                }
                 Spacer(modifier = Modifier.height(12.dp))
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
+        SunrisePillButton(
+            text = "Activate",
             onClick = onActivate,
             enabled = policy.rules.isNotEmpty(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PresentColors.AllowedFg)
-        ) {
-            Text("Activate", fontSize = 17.sp, fontWeight = FontWeight.Bold)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedButton(
+            modifier = Modifier.fillMaxWidth(),
+            height = 60.dp
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        OutlinePillButton(
+            text = "Edit",
             onClick = onEdit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text("Edit", color = PresentColors.Primary, fontSize = 15.sp)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+            modifier = Modifier.fillMaxWidth(),
+            height = 48.dp
+        )
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun RuleCard(rule: PolicyRule) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(platformEmoji(rule.platform), fontSize = 26.sp)
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(platformName(rule.platform), fontSize = 17.sp, fontWeight = FontWeight.Bold, color = PresentColors.Ink)
-                    Text("🕘 ${scheduleLabel(rule.schedule)}", fontSize = 13.sp, color = PresentColors.Muted)
-                }
-            }
-
-            if (rule.targetSurfaces.isNotEmpty() || rule.allowedSurfaces.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    rule.targetSurfaces.forEach { surface ->
-                        PolicyChip(
-                            text = "Blocked: ${blockedSurfaceLabel(surface)}",
-                            background = PresentColors.BlockedBg,
-                            foreground = PresentColors.BlockedFg,
-                            webOnly = !surface.isEnforcedOnAndroid
-                        )
-                    }
-                    rule.allowedSurfaces.forEach { surface ->
-                        PolicyChip(
-                            text = "Allowed: ${allowedSurfaceLabel(surface)}",
-                            background = PresentColors.AllowedBg,
-                            foreground = PresentColors.AllowedFg,
-                            webOnly = false
-                        )
-                    }
-                }
-            }
-
-            if (rule.whitelistedEntities.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    "⭐ Always allowed: ${rule.whitelistedEntities.joinToString(", ")}",
-                    fontSize = 13.sp,
-                    color = PresentColors.Ink
-                )
+private fun RuleCard(rule: PolicyRule, chipDelayMs: Int) {
+    PresentCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            EmojiBadge(emoji = platformEmoji(rule.platform), background = PresentPalette.Cream)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(platformName(rule.platform), style = PresentType.Title, color = PresentPalette.Ink)
+                Text("🕘 ${scheduleLabel(rule.schedule)}", style = PresentType.Label, color = PresentPalette.InkMuted)
             }
         }
-    }
-}
 
-@Composable
-private fun PolicyChip(text: String, background: Color, foreground: Color, webOnly: Boolean) {
-    Surface(shape = RoundedCornerShape(50), color = background) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = foreground)
-            if (webOnly) {
-                Spacer(modifier = Modifier.width(6.dp))
-                Surface(shape = RoundedCornerShape(50), color = PresentColors.WebOnlyBg) {
-                    Text(
-                        "web only",
-                        fontSize = 10.sp,
-                        color = PresentColors.WebOnlyFg,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+        if (rule.targetSurfaces.isNotEmpty() || rule.allowedSurfaces.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(14.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                rule.targetSurfaces.forEachIndexed { i, surface ->
+                    SurfaceChip(
+                        text = "Blocked: ${blockedSurfaceLabel(surface)}",
+                        tone = ChipTone.Blocked,
+                        appearDelayMs = chipDelayMs + i * PresentMotion.StaggerMs,
+                        tag = if (surface.isEnforcedOnAndroid) null else "web only"
+                    )
+                }
+                rule.allowedSurfaces.forEachIndexed { i, surface ->
+                    SurfaceChip(
+                        text = "Allowed: ${allowedSurfaceLabel(surface)}",
+                        tone = ChipTone.Allowed,
+                        appearDelayMs = chipDelayMs + (rule.targetSurfaces.size + i) * PresentMotion.StaggerMs
                     )
                 }
             }
+        }
+
+        if (rule.whitelistedEntities.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                "⭐ Always allowed: ${rule.whitelistedEntities.joinToString(", ")}",
+                style = PresentType.Label,
+                color = PresentPalette.Ink
+            )
         }
     }
 }

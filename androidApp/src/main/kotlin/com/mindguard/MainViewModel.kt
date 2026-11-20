@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mindguard.network.CompilerClient
 import com.mindguard.network.InsightsRequest
+import com.mindguard.onboarding.OnboardingAnswers
 import com.mindguard.shared.policy.PresentPolicy
+import com.mindguard.storage.OnboardingProfileStore
 import com.mindguard.storage.PolicyStore
 import com.mindguard.storage.SettingsDataStore
 import com.mindguard.ui.present.CompileUiState
@@ -23,7 +25,8 @@ const val PAUSE_DURATION_MS = 5 * 60 * 1000L
 class MainViewModel(
     private val store: SettingsDataStore,
     private val policyStore: PolicyStore,
-    compilerClient: CompilerClient
+    compilerClient: CompilerClient,
+    private val onboardingProfileStore: OnboardingProfileStore
 ) : ViewModel() {
 
     private val intentCompiler = IntentCompiler(compilerClient)
@@ -42,8 +45,11 @@ class MainViewModel(
     val protectionEnabled: StateFlow<Boolean> = store.protectionEnabledFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
-    val onboardingComplete: StateFlow<Boolean> = store.onboardingCompleteFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+    val onboardingStatus: StateFlow<Boolean?> = store.onboardingCompleteFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val onboardingAnswers: StateFlow<OnboardingAnswers?> = onboardingProfileStore.answersFlow
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val blockCountToday: StateFlow<Long> = store.blockCountTodayFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0L)
@@ -129,6 +135,15 @@ class MainViewModel(
 
     fun completeOnboarding() {
         viewModelScope.launch { store.setOnboardingComplete() }
+    }
+
+    fun saveOnboardingAnswers(answers: OnboardingAnswers) {
+        viewModelScope.launch { onboardingProfileStore.save(answers) }
+    }
+
+    fun compileOnboardingIntent(text: String) {
+        updateDraftPrompt(text)
+        compileIntent()
     }
 
     fun setInstagramEnabled(v: Boolean) { viewModelScope.launch { store.setInstagramEnabled(v) } }

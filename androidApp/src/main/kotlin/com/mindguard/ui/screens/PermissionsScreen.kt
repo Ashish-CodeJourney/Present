@@ -1,18 +1,32 @@
 package com.mindguard.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.mindguard.ui.components.NightSurface
+import com.mindguard.ui.components.PresentCard
+import com.mindguard.ui.components.PresentScreen
+import com.mindguard.ui.components.Staggered
+import com.mindguard.ui.components.SunrisePillButton
+import com.mindguard.ui.theme.PresentPalette
+import com.mindguard.ui.theme.PresentType
 
 @Composable
 fun PermissionsScreen(
@@ -24,77 +38,88 @@ fun PermissionsScreen(
 ) {
     LaunchedEffect(isGranted) { if (isGranted) onContinue() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+    PresentScreen(
+        contentPadding = PaddingValues(bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("🔐", fontSize = 56.sp, modifier = Modifier.padding(bottom = 16.dp))
-
-        Text(
-            "Permission Setup",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Text(
-            "Present uses Android's Accessibility API to detect short-video feeds (Reels, Shorts, Spotlight) — entirely on-device. No data leaves your phone.",
-            textAlign = TextAlign.Center,
-            fontSize = 14.sp,
-            color = Color(0xFF444444),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        if (needsRestrictedSettingsStep) {
-            StepCard(
-                number = "1",
-                title = "Allow Restricted Settings",
-                description = "Android 13+ requires this extra step for apps installed outside the Play Store.",
-                steps = listOf(
-                    "Tap \"Open App Info\" below",
-                    "Tap the ⋮ menu in the top-right corner",
-                    "Tap \"Allow restricted settings\"",
-                    "Come back here when done"
-                ),
-                buttonLabel = "Open App Info",
-                buttonColor = Color(0xFF1565C0),
-                onClick = onOpenAppInfo
-            )
-
+        NightSurface(
+            shape = NightHeaderShape,
+            contentPadding = 28.dp,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Spacer(modifier = Modifier.height(16.dp))
-
-            StepCard(
-                number = "2",
-                title = "Enable Accessibility Access",
-                description = "After step 1 is done, open Accessibility Settings and enable Present.",
-                steps = listOf(
-                    "Find \"Present\" in the list",
-                    "Tap it and enable the toggle"
-                ),
-                buttonLabel = "Open Accessibility Settings",
-                buttonColor = Color(0xFF635BBB),
-                onClick = onOpenSettings
-            )
-        } else {
-            Text(
-                "Steps: Find \"Present\" in the list, tap it, enable the toggle.",
-                textAlign = TextAlign.Center,
-                fontSize = 13.sp,
-                color = Color(0xFF666666),
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
-
-            Button(
-                onClick = onOpenSettings,
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF635BBB))
+                    .size(88.dp)
+                    .clip(CircleShape)
+                    .background(PresentPalette.NightCard),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Open Accessibility Settings", fontSize = 16.sp)
+                Text("🔐", style = PresentType.Display.copy(fontSize = PresentType.Headline.fontSize * 1.4f))
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                "One permission to go",
+                style = PresentType.Headline,
+                color = PresentPalette.OnNight,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Present uses Android's Accessibility API to detect short-video feeds (Reels, Shorts, Spotlight) — entirely on-device. No data leaves your phone.",
+                style = PresentType.Body,
+                color = PresentPalette.OnNightMuted,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+            Spacer(modifier = Modifier.height(24.dp))
+
+            if (needsRestrictedSettingsStep) {
+                Staggered(index = 0) {
+                    StepCard(
+                        number = "1",
+                        title = "Allow Restricted Settings",
+                        description = "Android 13+ requires this extra step for apps installed outside the Play Store.",
+                        steps = listOf(
+                            "Tap \"Open App Info\" below",
+                            "Tap the ⋮ menu in the top-right corner",
+                            "Tap \"Allow restricted settings\"",
+                            "Come back here when done"
+                        ),
+                        buttonLabel = "Open App Info",
+                        onClick = onOpenAppInfo
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Staggered(index = 1) {
+                    StepCard(
+                        number = "2",
+                        title = "Enable Accessibility Access",
+                        description = "After step 1 is done, open Accessibility Settings and enable Present.",
+                        steps = listOf(
+                            "Find \"Present\" in the list",
+                            "Tap it and enable the toggle"
+                        ),
+                        buttonLabel = "Open Accessibility Settings",
+                        onClick = onOpenSettings
+                    )
+                }
+            } else {
+                Staggered(index = 0) {
+                    StepCard(
+                        number = "1",
+                        title = "Enable Accessibility Access",
+                        description = "Find \"Present\" in the list, tap it, enable the toggle.",
+                        steps = emptyList(),
+                        buttonLabel = "Open Accessibility Settings",
+                        onClick = onOpenSettings
+                    )
+                }
             }
         }
     }
@@ -107,51 +132,45 @@ private fun StepCard(
     description: String,
     steps: List<String>,
     buttonLabel: String,
-    buttonColor: Color,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .background(buttonColor, RoundedCornerShape(50)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(number, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+    PresentCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .background(PresentPalette.sunriseGradient),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(number, style = PresentType.Label, color = PresentPalette.CardLight)
             }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(title, style = PresentType.Title, color = PresentPalette.Ink)
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(description, fontSize = 13.sp, color = Color(0xFF555555))
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(description, style = PresentType.Body, color = PresentPalette.InkMuted)
 
+        if (steps.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(10.dp))
             steps.forEachIndexed { i, step ->
                 Text(
                     "${i + 1}. $step",
-                    fontSize = 13.sp,
-                    color = Color(0xFF333333),
-                    modifier = Modifier.padding(vertical = 2.dp)
+                    style = PresentType.Label,
+                    color = PresentPalette.Ink,
+                    modifier = Modifier.padding(vertical = 3.dp)
                 )
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = onClick,
-                modifier = Modifier.fillMaxWidth().height(46.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
-            ) {
-                Text(buttonLabel, fontSize = 14.sp)
-            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SunrisePillButton(
+            text = buttonLabel,
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth(),
+            height = 50.dp
+        )
     }
 }

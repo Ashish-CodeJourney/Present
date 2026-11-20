@@ -10,7 +10,11 @@ import android.view.accessibility.AccessibilityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -25,12 +29,14 @@ import com.mindguard.ui.screens.HomeScreen
 import com.mindguard.ui.screens.IntentScreen
 import com.mindguard.ui.screens.PauseCardScreen
 import com.mindguard.ui.screens.ReviewScreen
-import com.mindguard.ui.screens.OnboardingScreen
 import com.mindguard.ui.screens.PermissionsScreen
 import com.mindguard.ui.screens.SettingsScreen
 import com.mindguard.ui.screens.StatsScreen
 import com.mindguard.ui.screens.TurnOffGuardScreen
+import com.mindguard.onboarding.usageAccessSettingsIntent
+import com.mindguard.ui.onboarding.OnboardingHost
 import com.mindguard.ui.theme.MindGuardTheme
+import com.mindguard.ui.theme.PresentPalette
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -54,6 +60,7 @@ class MainActivity : ComponentActivity() {
                     onOpenAccessibilitySettings = {
                         startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                     },
+                    onOpenUsageAccessSettings = ::openUsageAccessSettings,
                     onOpenAppInfo = {
                         startActivity(
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -73,6 +80,14 @@ class MainActivity : ComponentActivity() {
 
     private fun handleLaunchIntent(intent: Intent?) {
         if (intent?.getBooleanExtra(EXTRA_OPEN_TURN_OFF_GUARD, false) == true) turnOffGuardRequests += 1
+    }
+
+    private fun openUsageAccessSettings() {
+        try {
+            startActivity(usageAccessSettingsIntent())
+        } catch (e: android.content.ActivityNotFoundException) {
+            android.util.Log.w("Present", "No usage access settings screen")
+        }
     }
 
     private fun startQuest(quest: SocialQuest) {
@@ -112,7 +127,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { ONBOARDING, PERMISSIONS, HOME, STATS, SETTINGS, INTENT, REVIEW, PAUSE, TURN_OFF_GUARD }
+private enum class Screen { PERMISSIONS, HOME, STATS, SETTINGS, INTENT, REVIEW, PAUSE, TURN_OFF_GUARD }
 
 @Composable
 fun MindGuardApp(
@@ -121,10 +136,12 @@ fun MindGuardApp(
     checkAccessibilityEnabled: () -> Boolean,
     needsRestrictedSettingsStep: Boolean,
     onOpenAccessibilitySettings: () -> Unit,
+    onOpenUsageAccessSettings: () -> Unit,
     onOpenAppInfo: () -> Unit,
     viewModel: MainViewModel = koinViewModel()
 ) {
-    val onboardingComplete  by viewModel.onboardingComplete.collectAsState()
+    val onboardingStatus    by viewModel.onboardingStatus.collectAsState()
+    val onboardingAnswers   by viewModel.onboardingAnswers.collectAsState()
     val protectionEnabled   by viewModel.protectionEnabled.collectAsState()
     val blockCountToday     by viewModel.blockCountToday.collectAsState()
     val attemptCountToday   by viewModel.attemptCountToday.collectAsState()
@@ -171,12 +188,33 @@ fun MindGuardApp(
         }
     }
 
-    val startScreen = when {
-        !onboardingComplete   -> Screen.ONBOARDING
-        !accessibilityEnabled -> Screen.PERMISSIONS
-        else                  -> Screen.HOME
+    when (onboardingStatus) {
+        null -> {
+            Box(modifier = Modifier.fillMaxSize().background(PresentPalette.nightGradient))
+            return
+        }
+        false -> {
+            OnboardingHost(
+                accessibilityEnabled        = accessibilityEnabled,
+                needsRestrictedSettingsStep = needsRestrictedSettingsStep,
+                savedAnswers                = onboardingAnswers,
+                compileState                = compileState,
+                onSaveAnswers               = viewModel::saveOnboardingAnswers,
+                onCompileIntent             = viewModel::compileOnboardingIntent,
+                onActivatePolicy            = viewModel::activatePolicy,
+                onResetCompile              = viewModel::backToIntent,
+                onOpenUsageAccessSettings   = onOpenUsageAccessSettings,
+                onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+                onOpenAppInfo               = onOpenAppInfo,
+                onFinish                    = viewModel::completeOnboarding
+            )
+            return
+        }
+        true -> Unit
     }
-    var currentScreen by remember(onboardingComplete, accessibilityEnabled) {
+
+    val startScreen = if (accessibilityEnabled) Screen.HOME else Screen.PERMISSIONS
+    var currentScreen by remember(accessibilityEnabled) {
         mutableStateOf(startScreen)
     }
 
@@ -190,12 +228,6 @@ fun MindGuardApp(
     }
 
     when (currentScreen) {
-        Screen.ONBOARDING -> OnboardingScreen(
-            onContinue = {
-                viewModel.completeOnboarding()
-                currentScreen = if (accessibilityEnabled) Screen.HOME else Screen.PERMISSIONS
-            }
-        )
         Screen.PERMISSIONS -> PermissionsScreen(
             isGranted = accessibilityEnabled,
             needsRestrictedSettingsStep = needsRestrictedSettingsStep,

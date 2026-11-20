@@ -1,27 +1,61 @@
 package com.mindguard.ui.screens
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.mindguard.ui.components.ChipTone
+import com.mindguard.ui.components.EmojiBadge
+import com.mindguard.ui.components.NightSurface
+import com.mindguard.ui.components.PresentCard
+import com.mindguard.ui.components.PresentScreen
+import com.mindguard.ui.components.PulseDot
+import com.mindguard.ui.components.ScreenTopBar
+import com.mindguard.ui.components.ShimmerLine
+import com.mindguard.ui.components.Staggered
+import com.mindguard.ui.components.SunrisePillButton
+import com.mindguard.ui.components.rememberCountUp
 import com.mindguard.ui.present.InsightsUiState
 import com.mindguard.ui.present.formatTimeReclaimed
+import com.mindguard.ui.theme.PresentPalette
+import com.mindguard.ui.theme.PresentShapes
+import com.mindguard.ui.theme.PresentType
+
+private val TrackColor = Color(0xFFF1E9E0)
 
 @Composable
 fun StatsScreen(
@@ -47,157 +81,95 @@ fun StatsScreen(
     val blockRate = if (attempts > 0) blocks.toFloat() / attempts else 0f
 
     val appData = listOf(
-        AppStat("Instagram", instagramBlocks, Color(0xFFE1306C)),
-        AppStat("YouTube",   youtubeBlocks,   Color(0xFFFF0000)),
-        AppStat("TikTok",    tiktokBlocks,    Color(0xFF444444)),
-        AppStat("Snapchat",  snapchatBlocks,  Color(0xFFFFCC00))
+        AppStat("Instagram", "📸", instagramBlocks, Color(0xFFE1306C)),
+        AppStat("YouTube",   "▶️", youtubeBlocks,   Color(0xFFFF0000)),
+        AppStat("TikTok",    "🎵", tiktokBlocks,    Color(0xFF444444)),
+        AppStat("Snapchat",  "👻", snapchatBlocks,  Color(0xFFFFCC00))
     )
     val totalAppBlocks = appData.sumOf { it.count }
+    val shownBlocks = rememberCountUp(blocks)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF4F3FF))
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
+    PresentScreen(contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 32.dp)) {
+        ScreenTopBar(title = "Stats", onBack = onBack)
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextButton(onClick = onBack) { Text("← Back", color = Color(0xFF635BBB)) }
-            Spacer(modifier = Modifier.weight(1f))
-            Text("Stats", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(64.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        RangeToggle(showToday = showToday, onChange = { showToday = it })
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Staggered(index = 0) {
+            NightSurface(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("⏱️  Time reclaimed (approx.)", style = PresentType.Label, color = PresentPalette.OnNightMuted)
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    formatTimeReclaimed(shownBlocks),
+                    style = PresentType.Display,
+                    color = PresentPalette.OnNight,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    "$blocks intercepts × 4.2 min of scrolling each",
+                    style = PresentType.Label,
+                    color = PresentPalette.OnNightMuted,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier
-                .background(Color(0xFFE8E6FF), RoundedCornerShape(50))
-                .padding(4.dp)
-        ) {
-            listOf("Today" to true, "All Time" to false).forEach { (label, isToday) ->
-                val selected = showToday == isToday
-                Box(
-                    modifier = Modifier
-                        .background(
-                            if (selected) Color(0xFF635BBB) else Color.Transparent,
-                            RoundedCornerShape(50)
-                        )
-                        .clickable { showToday = isToday }
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        label,
-                        color = if (selected) Color.White else Color(0xFF635BBB),
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                        fontSize = 14.sp
-                    )
+        Staggered(index = 1) {
+            InsightCard(state = insightsState, onRequestInsight = onRequestInsight)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Staggered(index = 2) {
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    DetailCard("🚫", "Videos blocked", blocks.toString(), Modifier.weight(1f))
+                    DetailCard("👀", "Attempts", attempts.toString(), Modifier.weight(1f))
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    DetailCard("🎯", "Deflected", "$deflPct%", Modifier.weight(1f))
+                    DetailCard("😬", "Slipped through", slipped.toString(), Modifier.weight(1f))
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF635BBB))
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("⏱️ Time reclaimed", fontSize = 15.sp, color = Color.White.copy(alpha = 0.8f))
-                Text(
-                    "≈ ${formatTimeReclaimed(blocks)}",
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    "$blocks intercepts × 4.2 min of scrolling each",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.6f)
-                )
+        Staggered(index = 3) {
+            PresentCard {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Block rate", style = PresentType.Body, color = PresentPalette.InkMuted)
+                    Text("$deflPct%", style = PresentType.Title, color = PresentPalette.Ink)
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                GradientBar(fraction = blockRate.coerceIn(0f, 1f))
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        InsightCard(state = insightsState, onRequestInsight = onRequestInsight)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            DetailCard("🚫", "Videos Blocked",  blocks.toString(),   Modifier.weight(1f))
-            DetailCard("👀", "Attempts",         attempts.toString(), Modifier.weight(1f))
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            DetailCard("🎯", "Deflected",        "$deflPct%",         Modifier.weight(1f))
-            DetailCard("😬", "Slipped Through",  slipped.toString(),  Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Block rate", fontSize = 13.sp, color = Color(0xFF666666))
-                Text("$deflPct%", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color(0xFF635BBB))
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-            LinearProgressIndicator(
-                progress = { blockRate.coerceIn(0f, 1f) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = Color(0xFF635BBB),
-                trackColor = Color(0xFFE8E6FF)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                Text(
-                    "App Breakdown",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A1A2E)
-                )
-                Text(
-                    "All-time distribution",
-                    fontSize = 12.sp,
-                    color = Color(0xFF888888)
-                )
+        Staggered(index = 4) {
+            PresentCard {
+                Text("App breakdown", style = PresentType.Title, color = PresentPalette.Ink)
+                Text("All-time distribution", style = PresentType.Label, color = PresentPalette.InkMuted)
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (totalAppBlocks == 0L) {
                     Text(
                         "No blocks recorded yet — the chart will appear once you get started!",
-                        fontSize = 14.sp,
-                        color = Color(0xFF888888),
+                        style = PresentType.Body,
+                        color = PresentPalette.InkMuted,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -208,7 +180,7 @@ fun StatsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AppPieChart(
+                        AppDonutChart(
                             data = appData,
                             total = totalAppBlocks,
                             modifier = Modifier.size(130.dp)
@@ -225,16 +197,11 @@ fun StatsScreen(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Column {
-                                        Text(
-                                            app.name,
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = Color(0xFF1A1A2E)
-                                        )
+                                        Text(app.name, style = PresentType.Label, color = PresentPalette.Ink)
                                         Text(
                                             "${app.count} blocks · $pct%",
-                                            fontSize = 11.sp,
-                                            color = Color(0xFF888888)
+                                            style = PresentType.Label,
+                                            color = PresentPalette.InkMuted
                                         )
                                     }
                                 }
@@ -257,191 +224,233 @@ fun StatsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF7ED))
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("🔥", fontSize = 28.sp)
-                    Text("$currentStreak", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB45309))
-                    Text("Current streak", fontSize = 11.sp, color = Color(0xFF888888))
-                }
-                VerticalDivider(modifier = Modifier.height(56.dp), color = Color(0xFFFFE4B5))
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("🏆", fontSize = 28.sp)
-                    Text("$bestStreak", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB45309))
-                    Text("Best streak", fontSize = 11.sp, color = Color(0xFF888888))
+        Staggered(index = 5) {
+            PresentCard(color = PresentPalette.SunriseSoft) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    StreakStat("🔥", "$currentStreak", "Current streak")
+                    Box(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(56.dp)
+                            .background(PresentPalette.Sunrise.copy(alpha = 0.25f))
+                    )
+                    StreakStat("🏆", "$bestStreak", "Best streak")
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-private data class AppStat(val name: String, val count: Long, val color: Color)
+private data class AppStat(val name: String, val emoji: String, val count: Long, val color: Color)
 
 @Composable
-private fun AppPieChart(data: List<AppStat>, total: Long, modifier: Modifier = Modifier) {
+private fun RangeToggle(showToday: Boolean, onChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(PresentShapes.Pill)
+            .background(PresentPalette.CardLight)
+            .padding(4.dp)
+    ) {
+        listOf("Today" to true, "All time" to false).forEach { (label, isToday) ->
+            val selected = showToday == isToday
+            val background by animateColorAsState(
+                targetValue = if (selected) PresentPalette.Ink else Color.Transparent,
+                animationSpec = tween(durationMillis = 250),
+                label = "rangeBg"
+            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(PresentShapes.Pill)
+                    .background(background)
+                    .clickable { onChange(isToday) }
+                    .padding(vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    label,
+                    style = PresentType.Label,
+                    color = if (selected) PresentPalette.OnNight else PresentPalette.InkMuted
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GradientBar(fraction: Float) {
+    val animated by animateFloatAsState(
+        targetValue = fraction,
+        animationSpec = tween(durationMillis = 900, easing = FastOutSlowInEasing),
+        label = "blockRateBar"
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(12.dp)
+            .clip(PresentShapes.Pill)
+            .background(TrackColor)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(animated)
+                .fillMaxHeight()
+                .clip(PresentShapes.Pill)
+                .background(PresentPalette.sunriseGradient)
+        )
+    }
+}
+
+@Composable
+private fun AppDonutChart(data: List<AppStat>, total: Long, modifier: Modifier = Modifier) {
+    val reveal = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        reveal.animateTo(1f, tween(durationMillis = 1_000, easing = FastOutSlowInEasing))
+    }
     Canvas(modifier = modifier) {
-        val strokeWidth = size.width * 0.2f
+        val strokeWidth = size.width * 0.18f
         val radius = (size.minDimension - strokeWidth) / 2f
         val center = Offset(size.width / 2f, size.height / 2f)
         val topLeft = Offset(center.x - radius, center.y - radius)
         val arcSize = Size(radius * 2f, radius * 2f)
+        val gap = 6f
+        val progress = reveal.value
 
-        var startAngle = -90f
-        val gap = 3f
+        drawArc(
+            color = TrackColor,
+            startAngle = 0f,
+            sweepAngle = 360f,
+            useCenter = false,
+            topLeft = topLeft,
+            size = arcSize,
+            style = Stroke(width = strokeWidth)
+        )
 
-        data.filter { it.count > 0 }.forEach { app ->
-            val sweep = (app.count.toFloat() / total.toFloat()) * 360f - gap
+        data.filter { it.count > 0 }.fold(-90f) { startAngle, app ->
+            val sweep = (app.count.toFloat() / total.toFloat()) * 360f
             drawArc(
                 color = app.color,
-                startAngle = startAngle,
-                sweepAngle = sweep.coerceAtLeast(0f),
+                startAngle = startAngle + gap / 2f,
+                sweepAngle = ((sweep - gap) * progress).coerceAtLeast(0.5f),
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
-                style = Stroke(width = strokeWidth)
+                style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
-            startAngle += sweep + gap
+            startAngle + sweep
         }
     }
 }
 
 @Composable
 private fun AppChip(app: AppStat, modifier: Modifier = Modifier) {
-    val emoji = when (app.name) {
-        "Instagram" -> "📸"
-        "YouTube"   -> "▶️"
-        "TikTok"    -> "🎵"
-        "Snapchat"  -> "👻"
-        else        -> "📱"
-    }
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = app.color.copy(alpha = 0.1f))
+    Column(
+        modifier = modifier
+            .clip(PresentShapes.Chip)
+            .background(app.color.copy(alpha = 0.10f))
+            .padding(vertical = 10.dp, horizontal = 4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp, horizontal = 4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(emoji, fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                app.count.toString(),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A1A2E)
-            )
-            Text(
-                app.name,
-                fontSize = 9.sp,
-                color = Color(0xFF888888),
-                textAlign = TextAlign.Center,
-                maxLines = 1
-            )
-        }
+        Text(app.emoji, style = PresentType.Body)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(app.count.toString(), style = PresentType.Title, color = PresentPalette.Ink)
+        Text(
+            app.name,
+            style = PresentType.Label.copy(fontSize = PresentType.Label.fontSize * 0.8f),
+            color = PresentPalette.InkMuted,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
     }
 }
 
 @Composable
 private fun DetailCard(emoji: String, label: String, value: String, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(emoji, fontSize = 24.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
-            Text(label, fontSize = 11.sp, color = Color(0xFF888888), textAlign = TextAlign.Center)
-        }
+    PresentCard(modifier = modifier, contentPadding = 16.dp) {
+        EmojiBadge(emoji = emoji, size = 36.dp, background = PresentPalette.Cream, style = PresentType.Body)
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(value, style = PresentType.Headline, color = PresentPalette.Ink)
+        Text(label, style = PresentType.Label, color = PresentPalette.InkMuted)
+    }
+}
+
+@Composable
+private fun StreakStat(emoji: String, value: String, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(emoji, style = PresentType.Headline)
+        Text(value, style = PresentType.Headline, color = ChipTone.Sunrise.foreground)
+        Text(label, style = PresentType.Label, color = PresentPalette.InkMuted)
     }
 }
 
 @Composable
 private fun InsightCard(state: InsightsUiState, onRequestInsight: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text("🧠 Weekly insight", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A2E))
-            Text(
-                "Gemini reads your intercept counts (never your content)",
-                fontSize = 12.sp,
-                color = Color(0xFF888888)
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-
-            when (state) {
-                InsightsUiState.Idle -> InsightButton("Get my weekly insight from Gemini ✨", onRequestInsight)
-                InsightsUiState.Loading -> Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color(0xFF635BBB),
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text("Gemini is reading your week…", fontSize = 14.sp, color = Color(0xFF635BBB))
-                }
-                is InsightsUiState.Ready -> Column {
-                    Text(state.headline, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF635BBB))
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(state.insight, fontSize = 14.sp, color = Color(0xFF1A1A2E))
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Surface(shape = RoundedCornerShape(12.dp), color = Color(0xFFE3F5E6)) {
-                        Text(
-                            "💡 ${state.suggestion}",
-                            fontSize = 14.sp,
-                            color = Color(0xFF1B5E20),
-                            modifier = Modifier.padding(12.dp)
-                        )
-                    }
-                }
-                is InsightsUiState.Error -> Column {
-                    Text(state.message, fontSize = 14.sp, color = Color(0xFFC62828))
-                    Spacer(modifier = Modifier.height(10.dp))
-                    InsightButton("Try again", onRequestInsight)
-                }
+    PresentCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            EmojiBadge(emoji = "🧠", size = 40.dp, background = PresentPalette.Cream)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text("Weekly insight", style = PresentType.Title, color = PresentPalette.Ink)
+                Text(
+                    "Gemini reads your intercept counts (never your content)",
+                    style = PresentType.Label,
+                    color = PresentPalette.InkMuted
+                )
             }
         }
-    }
-}
+        Spacer(modifier = Modifier.height(16.dp))
 
-@Composable
-private fun InsightButton(label: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF635BBB))
-    ) {
-        Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+        when (state) {
+            InsightsUiState.Idle -> SunrisePillButton(
+                text = "Get my weekly insight from Gemini ✨",
+                onClick = onRequestInsight,
+                modifier = Modifier.fillMaxWidth(),
+                height = 52.dp
+            )
+            InsightsUiState.Loading -> Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    PulseDot(color = PresentPalette.Sunrise)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Gemini is reading your week…", style = PresentType.Label, color = PresentPalette.InkMuted)
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                ShimmerLine(widthFraction = 0.7f, height = 18.dp)
+                Spacer(modifier = Modifier.height(10.dp))
+                ShimmerLine(widthFraction = 0.95f)
+                Spacer(modifier = Modifier.height(8.dp))
+                ShimmerLine(widthFraction = 0.8f)
+            }
+            is InsightsUiState.Ready -> Column {
+                Text(state.headline, style = PresentType.Title, color = PresentPalette.Ink)
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(state.insight, style = PresentType.Body, color = PresentPalette.InkMuted)
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    "💡 ${state.suggestion}",
+                    style = PresentType.Body,
+                    color = ChipTone.Allowed.foreground,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(PresentShapes.Chip)
+                        .background(PresentPalette.MintSoft)
+                        .padding(14.dp)
+                )
+            }
+            is InsightsUiState.Error -> Column {
+                Text(state.message, style = PresentType.Body, color = ChipTone.Blocked.foreground)
+                Spacer(modifier = Modifier.height(12.dp))
+                SunrisePillButton(
+                    text = "Try again",
+                    onClick = onRequestInsight,
+                    modifier = Modifier.fillMaxWidth(),
+                    height = 48.dp
+                )
+            }
+        }
     }
 }
