@@ -177,7 +177,7 @@ private fun PhoneMock() {
     ) {
         if (phase < 2) {
             Column(modifier = Modifier.fillMaxSize().padding(8.dp)) {
-                Text("💬 Riya", style = PresentType.Label, color = PresentPalette.OnNightMuted)
+                Text("💬 Dhruvi", style = PresentType.Label, color = PresentPalette.OnNightMuted)
                 Spacer(modifier = Modifier.height(10.dp))
                 AnimatedVisibility(visible = phase >= 1, enter = scaleIn(transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0f)) + fadeIn()) {
                     Text(
