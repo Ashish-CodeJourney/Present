@@ -43,13 +43,14 @@ fun <N> collectVisibleSignals(
     return CollectedSignals(ids.toList(), texts.toList(), descriptions.toList())
 }
 
-const val ROOT_SCAN_THROTTLE_MS = 300L
+const val EVENT_INSPECTION_THROTTLE_MS = 300L
 
-// A story's progress bar fires content-change events continuously; walking the whole screen for
-// each one (90-200 ms) starved the service. Screen changes are always scanned; bursts of
-// content/scroll events at most once per throttle window (the watchdog covers the gaps).
-fun shouldScanRootOnEvent(eventType: Int, msSinceLastRootScan: Long): Boolean =
-    eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || msSinceLastRootScan >= ROOT_SCAN_THROTTLE_MS
+// A story's progress bar fires content-change events continuously; inspecting the screen for
+// each one (90-200 ms) starved the service and delayed the tab cover. Screen changes are always
+// inspected; bursts of content/scroll events at most once per throttle window (the watchdog
+// covers the gaps).
+fun shouldInspectEvent(eventType: Int, msSinceLastInspection: Long): Boolean =
+    eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || msSinceLastInspection >= EVENT_INSPECTION_THROTTLE_MS
 
 class AccessibilityEventConverter {
 

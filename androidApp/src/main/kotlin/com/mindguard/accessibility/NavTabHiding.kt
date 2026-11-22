@@ -7,12 +7,15 @@ import com.mindguard.shared.policy.PresentPolicy
 private const val NAV_BAR_TOP_FRACTION = 0.8
 private const val MIN_COVER_PX = 24
 
+// Tab-id lookups are cheap, so the cover can follow the screen several times a second.
+const val COVER_REFRESH_MS = 80L
+
 enum class HideableTab(
     val packageName: String,
     val surface: BlockedSurface,
     val viewIds: List<String>,
     val label: String,
-    val homeViewIds: List<String>,
+    val barViewIds: List<String>,
     private val dayBar: Int,
     private val nightBar: Int
 ) {
@@ -22,7 +25,13 @@ enum class HideableTab(
         surface = BlockedSurface.REELS_TAB,
         viewIds = listOf("com.instagram.android:id/clips_tab"),
         label = "Reels",
-        homeViewIds = listOf("com.instagram.android:id/feed_tab"),
+        // Any of the bar's other tabs proves the bar is on screen (Home, DMs, Search, Profile).
+        barViewIds = listOf(
+            "com.instagram.android:id/feed_tab",
+            "com.instagram.android:id/direct_tab",
+            "com.instagram.android:id/search_tab",
+            "com.instagram.android:id/profile_tab"
+        ),
         dayBar = 0xFFFFFFFF.toInt(),
         nightBar = 0xFF0C1014.toInt()
     ),
@@ -31,7 +40,7 @@ enum class HideableTab(
         surface = BlockedSurface.SHORTS_PLAYER,
         viewIds = emptyList(),
         label = "Shorts",
-        homeViewIds = emptyList(),
+        barViewIds = emptyList(),
         dayBar = 0xFFFFFFFF.toInt(),
         nightBar = 0xFF0F0F0F.toInt()
     );
@@ -100,11 +109,11 @@ enum class CoverUpdate { SHOW, KEEP, HIDE_NOW }
 
 private const val MISSES_BEFORE_HIDE = 2
 
-// The tab disappears only on the Home screen: leaving Home (a story, DMs, another tab) hides the
-// cover at once and blocking still closes any Reel that opens. On Home, Instagram briefly
-// drops the tab while redrawing, so one miss keeps the cover and the second hides it.
-fun coverUpdateFor(homeTabSelected: Boolean, tabFound: Boolean, misses: Int): CoverUpdate = when {
-    !homeTabSelected                  -> CoverUpdate.HIDE_NOW
+// The tab stays hidden on every screen that shows the bottom bar (Home, DMs, Search, Profile).
+// Where the bar disappears (a story, a DM thread, a full-screen Reel) the cover leaves at once.
+// While the bar redraws, Instagram briefly drops the tab, so one miss keeps the cover.
+fun coverUpdateFor(tabBarVisible: Boolean, tabFound: Boolean, misses: Int): CoverUpdate = when {
+    !tabBarVisible                    -> CoverUpdate.HIDE_NOW
     tabFound                          -> CoverUpdate.SHOW
     misses + 1 >= MISSES_BEFORE_HIDE  -> CoverUpdate.HIDE_NOW
     else                              -> CoverUpdate.KEEP

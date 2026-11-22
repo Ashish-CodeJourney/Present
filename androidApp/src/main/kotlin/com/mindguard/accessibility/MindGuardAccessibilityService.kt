@@ -47,7 +47,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     private lateinit var tabCover: TabCoverOverlay
     private var lastCoverRefreshMs = 0L
     private var coverMisses = 0
-    private var lastRootScanMs = 0L
+    private var lastInspectionMs = 0L
 
     private val detector = DetectBlockedContentUseCase(
         RuleEngine(listOf(InstagramReelRule(), YouTubeShortsRule(), TikTokRule(), SnapchatSpotlightRule()))
@@ -77,7 +77,6 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     companion object {
         const val WATCHDOG_INTERVAL_MS = 300L
         const val POST_BLOCK_PAUSE_MS  = 3_000L
-        const val COVER_REFRESH_MS     = 300L
     }
 
     override fun onCreate() {
@@ -117,14 +116,18 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         // contains reel resource IDs is often the 2nd or 3rd in a burst.
         val pkg = event.packageName?.toString() ?: return
         manageWatchdog(pkg)
-        processEventInternal(event)
+        // Cover first: it's cheap and must not wait behind detection work.
         refreshTabCover(force = false)
+        processEventInternal(event)
     }
 
     private fun processEventInternal(event: AccessibilityEvent) {
         try {
             val pkg = event.packageName?.toString() ?: return
             if (!isMonitored(pkg)) return
+            val now = System.currentTimeMillis()
+            if (!shouldInspectEvent(event.eventType, now - lastInspectionMs)) return
+            lastInspectionMs = now
 
             if (android.util.Log.isLoggable("MindGuard", android.util.Log.DEBUG)) {
                 android.util.Log.d("MindGuard", "Event pkg=$pkg class=${event.className} type=${event.eventType}")
@@ -216,11 +219,11 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
                 return
             }
             val screen = screenSize()
-            val (homeSelected, bounds) = try {
-                val home = isHomeTabSelected(root, tab, screen)
-                home to (if (home) findNavTabCover(root, tab, screen) else null)
+            val (barVisible, bounds) = try {
+                val bar = isTabBarVisible(root, tab, screen)
+                bar to (if (bar) findNavTabCover(root, tab, screen) else null)
             } finally { root.recycle() }
-            when (coverUpdateFor(homeSelected, bounds != null, coverMisses)) {
+            when (coverUpdateFor(barVisible, bounds != null, coverMisses)) {
                 CoverUpdate.SHOW -> {
                     coverMisses = 0
                     bounds?.let { tabCover.showAt(tab, it) }
@@ -260,13 +263,13 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
-    private fun isHomeTabSelected(root: AccessibilityNodeInfo, tab: HideableTab, screen: ScreenSize): Boolean {
+    private fun isTabBarVisible(root: AccessibilityNodeInfo, tab: HideableTab, screen: ScreenSize): Boolean {
         val candidates = if (tab.usesLabelSearch) root.findAccessibilityNodeInfosByText("Home")
-            else tab.homeViewIds.flatMap { root.findAccessibilityNodeInfosByViewId(it) }
+            else tab.barViewIds.flatMap { root.findAccessibilityNodeInfosByViewId(it) }
         return try {
             candidates.any { node ->
                 val facts = node.toTabNode()
-                node.isSelected && facts.visibleToUser && facts.bounds.top >= screen.height * 0.8
+                facts.visibleToUser && facts.bounds.top >= screen.height * 0.8
             }
         } finally {
             candidates.forEach { it.recycle() }
@@ -297,9 +300,6 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
 
     private fun buildSnapshot(event: AccessibilityEvent): ScreenSnapshot? {
         val basic = converter.toScreenSnapshot(event) ?: return null
-        val now = System.currentTimeMillis()
-        if (!shouldScanRootOnEvent(event.eventType, now - lastRootScanMs)) return basic
-        lastRootScanMs = now
         // Augment with a full window scan to find resource IDs deep in the hierarchy
         val root = rootInActiveWindow ?: return basic
         return try {

@@ -133,12 +133,30 @@ class NavTabHidingTest {
     }
 
     @Test
-    fun `leaving the Home tab removes the cover at once, a briefly missing tab on Home waits`() {
-        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(homeTabSelected = false, tabFound = false, misses = 0))
-        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(homeTabSelected = false, tabFound = true, misses = 0))
-        assertEquals(CoverUpdate.SHOW, coverUpdateFor(homeTabSelected = true, tabFound = true, misses = 3))
-        assertEquals(CoverUpdate.KEEP, coverUpdateFor(homeTabSelected = true, tabFound = false, misses = 0))
-        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(homeTabSelected = true, tabFound = false, misses = 1))
+    fun `the cover stays on every tab that shows the bar and leaves at once when the bar goes`() {
+        assertEquals(CoverUpdate.SHOW, coverUpdateFor(tabBarVisible = true, tabFound = true, misses = 3))
+        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(tabBarVisible = false, tabFound = false, misses = 0))
+        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(tabBarVisible = false, tabFound = true, misses = 0))
+    }
+
+    @Test
+    fun `a tab briefly missing while the bar redraws keeps the cover for one refresh`() {
+        assertEquals(CoverUpdate.KEEP, coverUpdateFor(tabBarVisible = true, tabFound = false, misses = 0))
+        assertEquals(CoverUpdate.HIDE_NOW, coverUpdateFor(tabBarVisible = true, tabFound = false, misses = 1))
+    }
+
+    @Test
+    fun `Instagram's bar is recognised from any of its other tabs, so DMs, search and profile count`() {
+        val bar = HideableTab.INSTAGRAM_REELS.barViewIds
+        listOf("feed_tab", "direct_tab", "search_tab", "profile_tab").forEach {
+            assertTrue("com.instagram.android:id/$it" in bar)
+        }
+        assertFalse("com.instagram.android:id/clips_tab" in bar)
+    }
+
+    @Test
+    fun `the cover refreshes several times a second so it follows the screen without a visible lag`() {
+        assertTrue(COVER_REFRESH_MS <= 100)
     }
 
     @Test
