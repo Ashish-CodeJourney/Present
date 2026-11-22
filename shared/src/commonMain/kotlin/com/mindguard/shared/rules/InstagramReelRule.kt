@@ -13,7 +13,9 @@ class InstagramReelRule : BlockingRule {
         // Activity/Fragment class-name fragments that only appear inside the Reels player.
         // These fire on TYPE_WINDOW_STATE_CHANGED the instant the player opens —
         // before any resource IDs appear in the accessibility tree.
-        val REEL_CLASS_FRAGMENTS = setOf("Reel", "Clips", "VerticalStream")
+        // Instagram's code calls Reels "clips" and stories "reels" (ReelViewerFragment is the
+        // story viewer), so "Reel" must not be used here.
+        val REEL_CLASS_FRAGMENTS = setOf("Clips", "VerticalStream")
 
         // Resource IDs that only appear inside the actual Reels/Clips player.
         // Navigation-tab IDs (reels_tab, clips_tab) are intentionally excluded because

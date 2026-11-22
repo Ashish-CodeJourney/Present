@@ -32,30 +32,35 @@ class BlockActionExecutor(private val service: AccessibilityService) {
         }
     }
 
-    // Navigates to the Instagram Home-feed tab rather than pressing Back.
-    // Back press inside the Reels player stays within the reel stack causing an infinite loop.
-    // Strategy: try 6 known resource IDs across builds → try content-description "Home" →
-    // fall back to Android HOME key. GO_BACK is never used.
+    // Leaves the Reels player without looping or refreshing the feed:
+    // from the Reels tab, tap Home; if Home is already selected (a Reel opened over the feed),
+    // press Back, because tapping Home again refreshes the feed. Back inside the Reels *tab*
+    // only moves to the previous reel, so it is never used there.
     private fun clickSafeTab(): Boolean {
         val root = try { service.rootInActiveWindow } catch (e: Exception) { null }
-            ?: return service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+            ?: return goBack()
+        val homeTab = try { findHomeTab(root) } finally { root.recycle() }
         return try {
-            // 1. Try known resource IDs in priority order
-            for (id in InstagramHomeTabStrategy.ORDERED_IDS) {
-                val nodes = root.findAccessibilityNodeInfosByViewId(id)
-                val tab = nodes.firstOrNull()
-                nodes.forEach { it.recycle() }
-                if (tab != null && tab.performAction(AccessibilityNodeInfo.ACTION_CLICK)) return true
+            when (safeTabActionFor(homeTab != null, homeTab?.isSelected == true)) {
+                SafeTabAction.TAP_HOME_TAB -> homeTab?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true || goBack()
+                SafeTabAction.GO_BACK -> goBack()
             }
-            // 2. Try content description "Home" (version-agnostic)
-            val homeNodes = root.findAccessibilityNodeInfosByText("Home")
-            val homeTab = homeNodes.firstOrNull { it.isClickable }
-            homeNodes.forEach { it.recycle() }
-            if (homeTab != null && homeTab.performAction(AccessibilityNodeInfo.ACTION_CLICK)) return true
-            // 3. Last resort: Android HOME key — never GO_BACK
-            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
         } finally {
-            root.recycle()
+            homeTab?.recycle()
         }
+    }
+
+    // Known resource IDs first, then the version-agnostic "Home" label.
+    private fun findHomeTab(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        for (id in InstagramHomeTabStrategy.ORDERED_IDS) {
+            val nodes = root.findAccessibilityNodeInfosByViewId(id)
+            val tab = nodes.firstOrNull { it.isVisibleToUser }
+            nodes.filter { it !== tab }.forEach { it.recycle() }
+            if (tab != null) return tab
+        }
+        val homeNodes = root.findAccessibilityNodeInfosByText("Home")
+        val homeTab = homeNodes.firstOrNull { it.isClickable && it.isVisibleToUser }
+        homeNodes.filter { it !== homeTab }.forEach { it.recycle() }
+        return homeTab
     }
 }

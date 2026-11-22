@@ -16,3 +16,11 @@ object InstagramHomeTabStrategy {
     fun selectId(availableIds: Set<String>): String? =
         ORDERED_IDS.firstOrNull { it in availableIds }
 }
+
+enum class SafeTabAction { TAP_HOME_TAB, GO_BACK }
+
+// Only the Reels *tab* needs the Home tap (Back there just moves to the previous reel).
+// A full-screen Reel (opened from the feed, a DM or a share) has no visible tab bar, and Back
+// closes it. Tapping Home while it's already selected would refresh the feed, so that's Back too.
+fun safeTabActionFor(homeTabFound: Boolean, homeTabSelected: Boolean): SafeTabAction =
+    if (homeTabFound && !homeTabSelected) SafeTabAction.TAP_HOME_TAB else SafeTabAction.GO_BACK

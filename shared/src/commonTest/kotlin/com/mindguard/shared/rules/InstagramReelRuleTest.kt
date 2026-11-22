@@ -299,6 +299,37 @@ class InstagramReelRuleTest {
         assertTrue(result.shouldBlock)
     }
 
+    // Instagram's own code calls stories "reels": the story viewer must not be treated as Reels.
+    @Test
+    fun doesNotBlockTheStoryViewerWhoseClassIsNamedReel() {
+        val result = rule.evaluate(
+            createSnapshot(windowClassName = "com.instagram.reels.fragment.ReelViewerFragment")
+        )
+        assertFalse(result.shouldBlock)
+    }
+
+    @Test
+    fun doesNotBlockTheStoryTrayOnTheHomeFeed() {
+        val result = rule.evaluate(
+            createSnapshot(windowClassName = "com.instagram.reels.ui.views.ReelsTrayRecyclerView")
+        )
+        assertFalse(result.shouldBlock)
+    }
+
+    @Test
+    fun doesNotBlockStoryViewerResourceIds() {
+        val result = rule.evaluate(
+            createSnapshot(
+                resourceIds = listOf(
+                    "com.instagram.android:id/reel_viewer_root",
+                    "com.instagram.android:id/reel_viewer_media_container",
+                    "com.instagram.android:id/reel_viewer_header"
+                )
+            )
+        )
+        assertFalse(result.shouldBlock)
+    }
+
     @Test
     fun doesNotBlockWhenClassNameIsMainTabActivity() {
         val result = rule.evaluate(

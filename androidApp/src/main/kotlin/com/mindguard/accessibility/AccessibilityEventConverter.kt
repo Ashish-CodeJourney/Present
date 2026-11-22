@@ -4,6 +4,53 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.mindguard.shared.models.ScreenSnapshot
 
+// Only a screen change names the screen. Content-change and scroll events carry the class of
+// whichever view changed (e.g. a "ShortsShelf" on YouTube's home feed), which must not be
+// mistaken for being inside the Shorts or Reels player.
+fun windowClassFor(eventType: Int, className: CharSequence?): String? =
+    className?.toString()
+        ?.takeIf { eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && it.isNotBlank() }
+
+data class NodeSignals(val viewId: String?, val text: String?, val description: String?, val visibleToUser: Boolean)
+
+data class CollectedSignals(val resourceIds: List<String>, val texts: List<String>, val descriptions: List<String>)
+
+// Only views the user can see count. Instagram keeps the Reels player loaded but hidden behind
+// the Home screen; counting its views made Present "escape" Reels while the user was on Home.
+fun <N> collectVisibleSignals(
+    root: N,
+    signalsOf: (N) -> NodeSignals,
+    childrenOf: (N) -> List<N>,
+    release: (N) -> Unit,
+    maxDepth: Int
+): CollectedSignals {
+    val ids = LinkedHashSet<String>()
+    val texts = LinkedHashSet<String>()
+    val descriptions = LinkedHashSet<String>()
+    fun visit(node: N, depth: Int) {
+        if (depth > maxDepth) return
+        val signals = signalsOf(node)
+        if (!signals.visibleToUser) return
+        signals.viewId?.takeIf { it.isNotBlank() }?.let { ids += it }
+        signals.text?.takeIf { it.isNotBlank() }?.let { texts += it }
+        signals.description?.takeIf { it.isNotBlank() }?.let { descriptions += it }
+        childrenOf(node).forEach { child ->
+            visit(child, depth + 1)
+            release(child)
+        }
+    }
+    visit(root, 0)
+    return CollectedSignals(ids.toList(), texts.toList(), descriptions.toList())
+}
+
+const val ROOT_SCAN_THROTTLE_MS = 300L
+
+// A story's progress bar fires content-change events continuously; walking the whole screen for
+// each one (90-200 ms) starved the service. Screen changes are always scanned; bursts of
+// content/scroll events at most once per throttle window (the watchdog covers the gaps).
+fun shouldScanRootOnEvent(eventType: Int, msSinceLastRootScan: Long): Boolean =
+    eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || msSinceLastRootScan >= ROOT_SCAN_THROTTLE_MS
+
 class AccessibilityEventConverter {
 
     fun toScreenSnapshot(event: AccessibilityEvent): ScreenSnapshot? {
@@ -32,7 +79,7 @@ class AccessibilityEventConverter {
             contentDescriptions = descriptions.distinct(),
             resourceIds = resourceIds.distinct(),
             timestampMillis = System.currentTimeMillis(),
-            windowClassName = event.className?.toString()?.takeIf { it.isNotBlank() }
+            windowClassName = windowClassFor(event.eventType, event.className)
         )
     }
 
@@ -69,26 +116,18 @@ class AccessibilityEventConverter {
         node: AccessibilityNodeInfo,
         text: MutableList<String>,
         descriptions: MutableList<String>,
-        resourceIds: MutableList<String>,
-        depth: Int = 0
+        resourceIds: MutableList<String>
     ) {
-        if (depth > MAX_DEPTH) return
-
-        node.viewIdResourceName?.takeIf { it.isNotBlank() }?.let {
-            if (!resourceIds.contains(it)) resourceIds.add(it)
-        }
-        node.text?.toString()?.takeIf { it.isNotBlank() }?.let {
-            if (!text.contains(it)) text.add(it)
-        }
-        node.contentDescription?.toString()?.takeIf { it.isNotBlank() }?.let {
-            if (!descriptions.contains(it)) descriptions.add(it)
-        }
-
-        repeat(node.childCount) { i ->
-            val child = node.getChild(i) ?: return@repeat
-            traverseNode(child, text, descriptions, resourceIds, depth + 1)
-            child.recycle()
-        }
+        val signals = collectVisibleSignals(
+            root = node,
+            signalsOf = { NodeSignals(it.viewIdResourceName, it.text?.toString(), it.contentDescription?.toString(), it.isVisibleToUser) },
+            childrenOf = { n -> (0 until n.childCount).mapNotNull { n.getChild(it) } },
+            release = { it.recycle() },
+            maxDepth = MAX_DEPTH
+        )
+        signals.resourceIds.filterNot { it in resourceIds }.forEach { resourceIds += it }
+        signals.texts.filterNot { it in text }.forEach { text += it }
+        signals.descriptions.filterNot { it in descriptions }.forEach { descriptions += it }
     }
 
     companion object {
