@@ -1,7 +1,12 @@
 package com.mindguard.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.graphics.Rect
+import android.os.Build
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import com.mindguard.shared.models.BlockAction
 import com.mindguard.shared.models.DetectionResult
 import com.mindguard.shared.models.ScreenSnapshot
@@ -39,6 +44,10 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     private lateinit var converter: AccessibilityEventConverter
     private lateinit var cooldown: BlockCooldown
     private lateinit var executor: BlockActionExecutor
+    private lateinit var tabCover: TabCoverOverlay
+    private var lastCoverRefreshMs = 0L
+    private var coverMisses = 0
+    private var lastRootScanMs = 0L
 
     private val detector = DetectBlockedContentUseCase(
         RuleEngine(listOf(InstagramReelRule(), YouTubeShortsRule(), TikTokRule(), SnapchatSpotlightRule()))
@@ -68,12 +77,14 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     companion object {
         const val WATCHDOG_INTERVAL_MS = 300L
         const val POST_BLOCK_PAUSE_MS  = 3_000L
+        const val COVER_REFRESH_MS     = 300L
     }
 
     override fun onCreate() {
         super.onCreate()
         converter = AccessibilityEventConverter()
         executor  = BlockActionExecutor(this)
+        tabCover  = TabCoverOverlay(this)
         // 500ms cooldown: tight enough to re-block quickly if user navigates back,
         // long enough to prevent back-press feedback loops.
         cooldown  = BlockCooldown(cooldownMs = 500L)
@@ -107,6 +118,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         val pkg = event.packageName?.toString() ?: return
         manageWatchdog(pkg)
         processEventInternal(event)
+        refreshTabCover(force = false)
     }
 
     private fun processEventInternal(event: AccessibilityEvent) {
@@ -163,6 +175,7 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
             while (isActive) {
                 delay(WATCHDOG_INTERVAL_MS)
                 scanActiveWindowFor(pkg)
+                refreshTabCover(force = true)
             }
         }
     }
@@ -188,8 +201,105 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
         }
     }
 
+    // Covers the Reels/Shorts tab in the foreground app while the rules block that surface.
+    private fun refreshTabCover(force: Boolean) {
+        val now = System.currentTimeMillis()
+        if (!force && now - lastCoverRefreshMs < COVER_REFRESH_MS) return
+        lastCoverRefreshMs = now
+        try {
+            val root = rootInActiveWindow
+            val tab = root?.packageName?.toString()?.let { HideableTab.forPackage(it) }
+            if (root == null || tab == null || !shouldHideTab(tabHidingState(tab, now))) {
+                root?.recycle()
+                coverMisses = 0
+                tabCover.hide()
+                return
+            }
+            val screen = screenSize()
+            val (homeSelected, bounds) = try {
+                val home = isHomeTabSelected(root, tab, screen)
+                home to (if (home) findNavTabCover(root, tab, screen) else null)
+            } finally { root.recycle() }
+            when (coverUpdateFor(homeSelected, bounds != null, coverMisses)) {
+                CoverUpdate.SHOW -> {
+                    coverMisses = 0
+                    bounds?.let { tabCover.showAt(tab, it) }
+                }
+                CoverUpdate.KEEP -> coverMisses++
+                CoverUpdate.HIDE_NOW -> {
+                    coverMisses = 0
+                    tabCover.hide()
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MindGuard", "tab cover error: ${e.message}")
+            tabCover.hide()
+        }
+    }
+
+    private fun tabHidingState(tab: HideableTab, now: Long) = TabHidingState(
+        tab = tab,
+        policy = activePolicy?.policy,
+        protectionEnabled = protectionEnabled,
+        inFocusHours = isCurrentlyInFocusHours(),
+        paused = isPausedAt(pauseUntilMs, now),
+        enabledPackages = enabledPackages,
+        minuteOfDay = currentMinuteOfDay()
+    )
+
+    private fun findNavTabCover(root: AccessibilityNodeInfo, tab: HideableTab, screen: ScreenSize): NodeBounds? {
+        val candidates = if (tab.usesLabelSearch) root.findAccessibilityNodeInfosByText(tab.label)
+            else tab.viewIds.flatMap { root.findAccessibilityNodeInfosByViewId(it) }
+        return try {
+            candidates.asSequence()
+                .map { it.toTabNode() }
+                .firstOrNull { isNavTab(tab, it, screen) }
+                ?.let { coverBounds(it.bounds, screen) }
+        } finally {
+            candidates.forEach { it.recycle() }
+        }
+    }
+
+    private fun isHomeTabSelected(root: AccessibilityNodeInfo, tab: HideableTab, screen: ScreenSize): Boolean {
+        val candidates = if (tab.usesLabelSearch) root.findAccessibilityNodeInfosByText("Home")
+            else tab.homeViewIds.flatMap { root.findAccessibilityNodeInfosByViewId(it) }
+        return try {
+            candidates.any { node ->
+                val facts = node.toTabNode()
+                node.isSelected && facts.visibleToUser && facts.bounds.top >= screen.height * 0.8
+            }
+        } finally {
+            candidates.forEach { it.recycle() }
+        }
+    }
+
+    private fun AccessibilityNodeInfo.toTabNode(): TabNode {
+        val rect = Rect().also { getBoundsInScreen(it) }
+        return TabNode(
+            viewId = viewIdResourceName,
+            label = (contentDescription ?: text)?.toString(),
+            bounds = NodeBounds(rect.left, rect.top, rect.right, rect.bottom),
+            visibleToUser = isVisibleToUser
+        )
+    }
+
+    private fun screenSize(): ScreenSize {
+        val wm = getSystemService(WINDOW_SERVICE) as WindowManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = wm.currentWindowMetrics.bounds
+            return ScreenSize(bounds.width(), bounds.height())
+        }
+        val metrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        wm.defaultDisplay.getRealMetrics(metrics)
+        return ScreenSize(metrics.widthPixels, metrics.heightPixels)
+    }
+
     private fun buildSnapshot(event: AccessibilityEvent): ScreenSnapshot? {
         val basic = converter.toScreenSnapshot(event) ?: return null
+        val now = System.currentTimeMillis()
+        if (!shouldScanRootOnEvent(event.eventType, now - lastRootScanMs)) return basic
+        lastRootScanMs = now
         // Augment with a full window scan to find resource IDs deep in the hierarchy
         val root = rootInActiveWindow ?: return basic
         return try {
@@ -236,5 +346,9 @@ class MindGuardAccessibilityService : AccessibilityService(), KoinComponent {
     }
 
     override fun onInterrupt() = Unit
-    override fun onDestroy() { serviceScope.cancel(); super.onDestroy() }
+    override fun onDestroy() {
+        tabCover.hide()
+        serviceScope.cancel()
+        super.onDestroy()
+    }
 }
