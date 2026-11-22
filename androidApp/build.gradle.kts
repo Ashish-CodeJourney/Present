@@ -58,8 +58,8 @@ android {
         applicationId = "com.mindguard"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.1.1"
 
         buildConfigField("String", "PRESENT_API_URL", "\"$presentApiUrl\"")
         buildConfigField("String", "PRESENT_API_KEY", "\"$presentApiKey\"")
