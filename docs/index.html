@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Present: Keep the people. Lose the feed.</title>
 <meta name="description" content="Present is a cognitive firewall for Android and Chrome. Say what you want in plain words, Gemini compiles it into rules, and your phone removes Reels and Shorts in about 100 ms while DMs, search and subscriptions keep working.">
-<meta name="theme-color" content="#0F0C29">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -29,8 +29,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="styles.css">
 <script>document.documentElement.classList.add("js")</script>
 <script src="script.js" defer></script>
@@ -93,6 +93,17 @@
     <linearGradient id="g-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1d4e"/><stop offset=".3" stop-color="#5b3a8c"/><stop offset=".5" stop-color="#e2607e"/><stop offset=".62" stop-color="#ffa45c"/><stop offset=".64" stop-color="#ffcf87"/></linearGradient>
     <radialGradient id="g-sunglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff4c8"/><stop offset=".22" stop-color="#ffd27a"/><stop offset=".5" stop-color="#ff8a4c" stop-opacity=".55"/><stop offset="1" stop-color="#ff6a5c" stop-opacity="0"/></radialGradient>
     <linearGradient id="g-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a4f7a"/><stop offset=".25" stop-color="#4a2c66"/><stop offset="1" stop-color="#0f0d2b"/></linearGradient>
+
+    <!-- Hand-drawn doodles: original glyphs, wobbled by the "rough" filter -->
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <linearGradient id="g-doodle-sun" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ffb347"/><stop offset=".5" stop-color="#ff5e62"/><stop offset="1" stop-color="#b245fc"/></linearGradient>
+    <symbol id="d-reel" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="46" height="46" rx="13" stroke-width="5"/><rect x="10.5" y="10" width="44" height="45" rx="12" stroke-width="1.6" opacity=".6"/><path d="M10 22h44M22 10l6 12M36 10l6 12" stroke-width="4"/><path d="M27 31v15l12-7.5z" stroke-width="4"/></g></symbol>
+    <symbol id="d-short" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M38 6 16 18c-7 4-7 13 0 17l4 2-4 2c-7 4-6 14 1 17 3 1 6 1 9-1l22-12c7-4 7-13 0-17l-4-2 4-2c7-4 6-14-1-17-3-1-6-1-9 1z" stroke-width="5"/><path d="M27 25v14l11-7z" stroke-width="4"/></g></symbol>
+    <symbol id="d-infinite" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M32 32c-6-8-11-12-17-12-7 0-11 5-11 12s4 12 11 12c6 0 11-4 17-12s11-12 17-12c7 0 11 5 11 12s-4 12-11 12c-6 0-11-4-17-12z" stroke-width="5"/><path d="M49 38l5 6-7 2" stroke-width="3.5"/></g></symbol>
+    <symbol id="d-explore" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.5"><rect x="8" y="8" width="20" height="20" rx="5"/><rect x="36" y="8" width="20" height="20" rx="5"/><rect x="8" y="36" width="20" height="20" rx="5"/><rect x="36" y="36" width="20" height="20" rx="5"/></g></symbol>
+    <symbol id="d-autoplay" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M54 32A22 22 0 1 1 46 15" stroke-width="5"/><path d="M47 6l-1 10-10-1" stroke-width="4.5"/><path d="M27 23v18l15-9z" stroke-width="4.5"/></g></symbol>
+    <symbol id="d-flame" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M32 58c-12 0-20-8-20-19 0-9 6-15 10-21 1 6 4 9 7 10-1-9 3-17 10-22 0 9 6 14 9 19 3 4 4 9 4 14 0 11-8 19-20 19z" stroke-width="5"/><path d="M32 50c-5 0-8-3-8-8 0-4 3-7 5-10 1 3 3 5 5 5 3 3 6 5 6 8 0 3-3 5-8 5z" stroke-width="3.5"/></g></symbol>
+    <symbol id="d-strike" viewBox="0 0 64 64"><g fill="none" stroke-linecap="round"><path d="M4 58 60 6" stroke-width="5"/><path d="M7 59 61 9" stroke-width="2.2" opacity=".75"/></g></symbol>
   </defs>
 </svg>
 
@@ -248,9 +259,9 @@
 </template>
 
 <header class="site-header" id="siteHeader">
-  <div class="container site-header__inner">
+  <div class="site-header__inner">
     <a class="brand" href="#top" aria-label="Present, back to top">
-      <img src="assets/logo.svg" alt="" width="36" height="36">
+      <img src="assets/logo.svg" alt="" width="32" height="32">
       <span>Present</span>
     </a>
     <nav class="site-nav" aria-label="Sections">
@@ -258,6 +269,7 @@
       <a href="#how">How it works</a>
       <a href="#screens">The app</a>
       <a href="#privacy">Privacy</a>
+      <a href="#chrome">For Chrome</a>
     </nav>
     <a class="btn btn--primary btn--sm" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the app</a>
   </div>
@@ -267,37 +279,48 @@
 
 <!-- 1. HERO -->
 <section class="hero" id="top" aria-labelledby="hero-title">
-  <div class="hero__sky" aria-hidden="true">
-    <canvas class="hero__stars" id="stars"></canvas>
-    <div class="hero__warm"></div>
-    <div class="hero__sunwrap">
-      <div class="hero__sun">
-        <div class="hero__glow"></div>
-        <div class="hero__rays"><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="hero__disc"></div>
-      </div>
-    </div>
-    <div class="hero__horizon"></div>
+  <div class="doodles" aria-hidden="true">
+    <svg class="doodle doodle--reel" viewBox="0 0 64 64"><use href="#d-reel" stroke="url(#g-doodle-sun)"/><use class="doodle__x" href="#d-strike"/></svg>
+    <svg class="doodle doodle--short" viewBox="0 0 64 64"><use href="#d-short" stroke="#ff2b2b"/><use class="doodle__x" href="#d-strike"/></svg>
+    <svg class="doodle doodle--infinite" viewBox="0 0 64 64"><use href="#d-infinite" stroke="#7c5cff"/><use class="doodle__x" href="#d-strike"/></svg>
+    <svg class="doodle doodle--explore" viewBox="0 0 64 64"><use href="#d-explore" stroke="#2f7bff"/><use class="doodle__x" href="#d-strike"/></svg>
+    <svg class="doodle doodle--autoplay" viewBox="0 0 64 64"><use href="#d-autoplay" stroke="#5a5a5a"/><use class="doodle__x" href="#d-strike"/></svg>
+    <svg class="doodle doodle--flame" viewBox="0 0 64 64"><use href="#d-flame" stroke="#ffb000"/><use class="doodle__x" href="#d-strike"/></svg>
   </div>
 
-  <div class="container hero__grid">
-    <div class="hero__copy">
-      <p class="eyebrow"><span class="dot"></span> For Android · Chrome extension</p>
-      <h1 id="hero-title">Keep the people.<br><span class="grad">Lose the feed.</span></h1>
-      <p class="lede">Present is a precision cognitive firewall for Android and Chrome. Say what you want in plain words. <strong>Gemini</strong> turns it into rules, and your phone quietly closes Reels and Shorts in about 100&nbsp;ms. Your DMs, search and subscriptions keep working.</p>
-      <div class="cta-row">
-        <a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the Android app</a>
-        <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
-      </div>
-      <ul class="hero__facts">
-        <li><b>Gemini</b> powered</li>
-        <li><b>~100 ms</b> on-device</li>
-        <li><b>0</b> screen data sent</li>
-      </ul>
+  <div class="container hero__copy">
+    <p class="eyebrow">For Android · Chrome extension · Open source</p>
+    <h1 id="hero-title"><span class="h-ink">Keep the people.</span> <span class="h-fade">Lose the feed.</span></h1>
+    <p class="lede">Say what you want from your phone in plain words. <strong>Gemini</strong> turns it into rules, and Present quietly closes Reels and Shorts in about 100&nbsp;ms. Your DMs, search and subscriptions keep working.</p>
+    <div class="cta-row cta-row--center">
+      <a class="btn btn--primary btn--lg" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">
+        <svg class="btn__ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><small>Download for</small>Android</span>
+      </a>
+      <a class="btn btn--ghost btn--lg" href="https://github.com/Ashish-CodeJourney/Present">
+        <svg class="btn__ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+        <span><small>Read the code on</small>GitHub</span>
+      </a>
     </div>
+    <ul class="hero__facts">
+      <li><small>Rules written by</small><b>Gemini</b><small>from one sentence</small></li>
+      <li><small>Reels closed in</small><b>~100 ms</b><small>on your phone</small></li>
+      <li><small>Screen data sent</small><b>0 bytes</b><small>ever</small></li>
+    </ul>
+  </div>
+  <a class="hero__scroll" href="#removes">Scroll to explore <span class="hero__chev" aria-hidden="true">↓</span></a>
+</section>
 
-    <figure class="hero__phone">
-      <div class="phone" role="img" aria-label="The Present app welcome screen: a phone shows a DM from Dhruvi, then Reels start auto-scrolling while a timer climbs to 40 minutes. Text: You opened Instagram for one message. 40 minutes later…">
+<!-- 1b. WHAT IT REMOVES + welcome phone -->
+<section class="removes section" id="removes" aria-labelledby="removes-title">
+  <div class="container">
+    <h2 class="statement reveal" id="removes-title">
+      <span class="statement__line">Present removes <span class="w-reels">Reels</span></span>
+      <span class="statement__line">and <span class="w-shorts">Shorts</span>.</span>
+      <span class="statement__line statement__line--soft">It keeps your <span class="w-keep">DMs</span>.</span>
+    </h2>
+    <figure class="stage-card stage-card--hero reveal">
+      <div class="phone phone--sun" role="img" aria-label="The Present app welcome screen: a phone shows a DM from Dhruvi, then Reels start auto-scrolling while a timer climbs to 40 minutes. Text: You opened Instagram for one message. 40 minutes later…">
         <div class="phone__screen scr-night welcome" id="welcomeDemo" data-video="media/onboarding-welcome.mp4">
           <div class="scr-stars"></div>
           <div class="mini-phone">
@@ -316,10 +339,9 @@
           <span class="scr-btn scr-btn--sun welcome__btn">Show me</span>
         </div>
       </div>
-      <figcaption class="sr-only">Recreation of the onboarding welcome screen in the Present Android app.</figcaption>
+      <figcaption class="stage-card__cap">The first screen of the Present app.</figcaption>
     </figure>
   </div>
-  <a class="hero__scroll" href="#trap"><span>Scroll to watch the sun rise</span><span class="hero__chev" aria-hidden="true">↓</span></a>
 </section>
 
 <!-- 2. THE TRAP -->
@@ -327,7 +349,7 @@
   <div class="container">
     <header class="section-head reveal">
       <p class="kicker">The trap</p>
-      <h2 id="trap-title">One message. Forty minutes.</h2>
+      <h2 id="trap-title">One message. <span class="h-fade">Forty minutes.</span></h2>
       <p>You know this story. It isn't a willpower problem. The feed is built to do it.</p>
     </header>
     <div class="scrolly">
@@ -389,12 +411,21 @@
   </div>
 </section>
 
+<!-- 2b. THE MATHS, filled in as you scroll -->
+<section class="fill section" aria-labelledby="fill-title">
+  <div class="container">
+    <h2 class="fill__text" id="fill-title" style="--n:21"><span class="fw" style="--i:0">An</span> <span class="fw" style="--i:1">hour</span> <span class="fw" style="--i:2">a</span> <span class="fw" style="--i:3">day</span> <span class="fw" style="--i:4">on</span> <span class="fw" style="--i:5">Reels</span> <span class="fw" style="--i:6">and</span> <span class="fw" style="--i:7">Shorts</span> <span class="fw" style="--i:8">adds</span> <span class="fw" style="--i:9">up</span> <span class="fw" style="--i:10">to</span> <span class="fw fw--hot" style="--i:11">15 full days<svg class="scribble" viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14c60-7 140-10 290-6M10 17c80-5 170-6 260-3" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" filter="url(#rough)"/></svg></span> <span class="fw" style="--i:14">a</span> <span class="fw" style="--i:15">year.</span> <span class="fw" style="--i:16">Do</span> <span class="fw" style="--i:17">you</span> <span class="fw" style="--i:18">want</span> <span class="fw" style="--i:19">them</span> <span class="fw" style="--i:20">back?</span></h2>
+    <div class="fill__bar" aria-hidden="true"><i></i></div>
+    <p class="fill__src">One hour a day, 365 days, is 15.2 days of 24 hours. Indians spend about an hour a day on Instagram alone (<a href="https://indiantelevision.com/iworld/youtube-tops-indias-digital-attention-race-hansa-research-study-finds/">Hansa Research 2026</a>). <a href="#calculator">See your own number ↓</a></p>
+  </div>
+</section>
+
 <!-- 3. CALCULATOR -->
 <section class="calc section" id="calculator" aria-labelledby="calc-title">
   <div class="container">
     <header class="section-head reveal">
       <p class="kicker">Your number</p>
-      <h2 id="calc-title">Where does your time really go?</h2>
+      <h2 id="calc-title">Where does your time <span class="h-fade">really go?</span></h2>
       <p>This is the first minute of Present's onboarding. Answer honestly; a rough guess is fine. Nothing leaves this page.</p>
     </header>
 
@@ -519,11 +550,11 @@
 </section>
 
 <!-- 4. HOW IT WORKS -->
-<section class="how section light" id="how" aria-labelledby="how-title">
+<section class="how section" id="how" aria-labelledby="how-title">
   <div class="container">
     <header class="section-head reveal">
       <p class="kicker">How it works</p>
-      <h2 id="how-title">Say it. Gemini compiles it. Your phone enforces it.</h2>
+      <h2 id="how-title">Say it. Gemini compiles it. <span class="h-fade">Your phone enforces it.</span></h2>
       <p>No settings maze. One sentence becomes a strict, typed policy that you check before anything changes.</p>
     </header>
     <ol class="how__steps">
@@ -591,7 +622,7 @@
   <div class="container">
     <header class="section-head reveal">
       <p class="kicker">Inside the app</p>
-      <h2 id="screens-title">Night sky to sunrise, in every screen.</h2>
+      <h2 id="screens-title">Night sky to sunrise, <span class="h-fade">in every screen.</span></h2>
       <p>The feed is the night. Real life is the sunrise. Real recordings from the Android app, with live HTML recreations where we have not recorded yet.</p>
     </header>
 
@@ -696,11 +727,11 @@
 </section>
 
 <!-- 6. TURN-OFF GUARD -->
-<section class="guard section light" id="guard" aria-labelledby="guard-title">
+<section class="guard section" id="guard" aria-labelledby="guard-title">
   <div class="container guard__grid">
     <div class="guard__copy reveal">
       <p class="kicker">Turn-off guard</p>
-      <h2 id="guard-title">Switching off takes a moment. A real person takes priority.</h2>
+      <h2 id="guard-title">Switching off takes a moment. <span class="h-fade">A real person takes priority.</span></h2>
       <p>Willpower is weakest at 11 PM. So Present adds a little friction exactly when you reach for the off switch, and offers a better option.</p>
       <ul class="ticks">
         <li><b>A countdown that doubles.</b> 15 seconds the first time today, then 30, then 60.</li>
@@ -765,8 +796,8 @@
 <section class="privacy section" id="privacy" aria-labelledby="privacy-title">
   <div class="container">
     <header class="section-head reveal">
-      <p class="kicker">🔒 Your privacy</p>
-      <h2 id="privacy-title">Your screen never leaves your phone.</h2>
+      <p class="kicker">Your privacy</p>
+      <h2 id="privacy-title">Your screen <span class="h-fade">never leaves your phone.</span></h2>
       <p>Recognising Reels happens in memory on your phone. What leaves it is the sentence you write for Gemini, and nothing else about your screen.</p>
     </header>
     <div class="privacy__grid">
@@ -791,7 +822,7 @@
   <div class="container">
     <header class="section-head reveal">
       <p class="kicker">The research</p>
-      <h2 id="research-title">Honest maths, from real studies.</h2>
+      <h2 id="research-title">Honest maths, <span class="h-fade">from real studies.</span></h2>
       <p>Every number in Present is labelled "estimate", uses conservative factors, and links back here.</p>
     </header>
     <div class="research__grid">
@@ -831,48 +862,60 @@
   </div>
 </section>
 
-<!-- 10. CHROME + FINAL CTA -->
-<section class="chrome section light" id="chrome" aria-labelledby="chrome-title">
-  <div class="container chrome__grid">
-    <div class="reveal">
+<!-- 10. CHROME -->
+<section class="chrome section" id="chrome" aria-labelledby="chrome-title">
+  <div class="container">
+    <header class="section-head section-head--center reveal">
       <p class="kicker">Present for Chrome</p>
-      <h2 id="chrome-title">The same promise on your laptop.</h2>
+      <h2 id="chrome-title"><span class="h-ink">The same promise,</span> <span class="h-fade">on your laptop.</span></h2>
       <p>A Manifest V3 extension hides YouTube Shorts and Instagram Reels and Explore, and leaves search, subscriptions and DMs alone. Type your intent in the popup, compile it with Gemini, review, activate. The policy syncs with <code>chrome.storage.sync</code>.</p>
-      <ol class="load-steps">
-        <li>Build it from <code>extension/</code> with <code>npm run build</code>.</li>
-        <li>Open <code>chrome://extensions</code> and turn on Developer mode.</li>
-        <li>Load unpacked → pick <code>extension/dist/</code>. With no policy, Shorts and Reels are hidden by default.</li>
-      </ol>
-      <a class="btn btn--dark" href="https://github.com/Ashish-CodeJourney/Present/tree/main/extension">Get the extension source</a>
-    </div>
-    <div class="browser reveal" role="img" aria-label="A browser window on YouTube: the Shorts shelf is replaced by a note saying Shorts hidden by Present, while subscription videos stay.">
-      <div class="browser__bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span></div>
-      <div class="browser__body">
-        <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
-        <div class="yt-shorts">
-          <p class="yt-shorts__head"><svg class="ic"><use href="#i-shortplay"/></svg>Shorts</p>
-          <div class="yt-shorts__cards">
-            <span class="yt-short"><span class="yt-short__thumb" data-scene="wash"></span><b>1 hour of grime, gone in 60 seconds</b><small>2.1M views</small></span>
-            <span class="yt-short"><span class="yt-short__thumb" data-scene="cat"></span><b>He looked me in the eye first</b><small>8.4M views</small></span>
-            <span class="yt-short"><span class="yt-short__thumb" data-scene="noodle"></span><b>2 AM ramen hits different</b><small>960K views</small></span>
-            <span class="yt-short"><span class="yt-short__thumb" data-scene="dance"></span><b>Day 47 of learning this combo</b><small>3.3M views</small></span>
+    </header>
+    <div class="stage-card stage-card--wide reveal">
+      <div class="browser" role="img" aria-label="A browser window on YouTube: the Shorts shelf is replaced by a note saying Shorts hidden by Present, while subscription videos stay.">
+        <div class="browser__bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span></div>
+        <div class="browser__body">
+          <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
+          <div class="yt-shorts">
+            <p class="yt-shorts__head"><svg class="ic"><use href="#i-shortplay"/></svg>Shorts</p>
+            <div class="yt-shorts__cards">
+              <span class="yt-short"><span class="yt-short__thumb" data-scene="wash"></span><b>1 hour of grime, gone in 60 seconds</b><small>2.1M views</small></span>
+              <span class="yt-short"><span class="yt-short__thumb" data-scene="cat"></span><b>He looked me in the eye first</b><small>8.4M views</small></span>
+              <span class="yt-short"><span class="yt-short__thumb" data-scene="noodle"></span><b>2 AM ramen hits different</b><small>960K views</small></span>
+              <span class="yt-short"><span class="yt-short__thumb" data-scene="dance"></span><b>Day 47 of learning this combo</b><small>3.3M views</small></span>
+            </div>
+            <span class="yt-shorts__hidden">🌅 Shorts hidden by Present</span>
           </div>
-          <span class="yt-shorts__hidden">🌅 Shorts hidden by Present</span>
+          <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
         </div>
-        <div class="yt-row"><span class="yt-vid"></span><span class="yt-vid"></span><span class="yt-vid"></span></div>
       </div>
     </div>
+    <ol class="load-steps reveal">
+      <li><span>1</span>Build it from <code>extension/</code> with <code>npm run build</code>.</li>
+      <li><span>2</span>Open <code>chrome://extensions</code> and turn on Developer mode.</li>
+      <li><span>3</span>Load unpacked → pick <code>extension/dist/</code>. With no policy, Shorts and Reels are hidden by default.</li>
+    </ol>
+    <p class="center reveal"><a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/tree/main/extension">Get the extension source</a></p>
   </div>
 </section>
 
-<section class="team section" id="get" aria-labelledby="final-title">
+<!-- 11. FINAL CTA -->
+<section class="final section" id="get" aria-labelledby="final-title">
   <div class="container">
-    <div class="final reveal">
-      <img src="assets/logo.svg" alt="" width="72" height="72">
-      <h2 class="final__h" id="final-title">Go call someone you miss.</h2>
+    <div class="final__inner reveal">
+      <svg class="final__sun" viewBox="0 0 200 140" aria-hidden="true">
+        <g fill="none" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" filter="url(#rough)">
+          <path class="final__rays" d="M100 18v-12M58 34l-8-9M142 34l8-9M30 70H16M170 70h14M40 50l-11-6M160 50l11-6" stroke-width="3.4"/>
+          <path d="M44 104a56 56 0 0 1 112 0" stroke-width="4"/>
+          <path d="M47 103a53 53 0 0 1 107-2" stroke-width="1.6" opacity=".6"/>
+          <path d="M60 92c8-12 22-20 40-20M66 98c10-10 24-16 38-14M74 104c10-8 22-12 34-10" stroke="#ff8a3d" stroke-width="2.2" opacity=".85"/>
+          <path d="M8 106c50-3 120-4 184-1M20 114c40-2 110-3 160 0M44 122c30-2 80-2 112 0" stroke-width="3"/>
+        </g>
+      </svg>
+      <h2 class="final__h" id="final-title"><span class="h-ink">Go call someone</span> <span class="h-fade">you miss.</span></h2>
+      <p class="final__sub">The feed will still be there in an hour. Will the people around you?</p>
       <div class="cta-row cta-row--center">
-        <a class="btn btn--primary" href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Get the Android app</a>
-        <a class="btn btn--ghost" href="https://github.com/Ashish-CodeJourney/Present">View on GitHub</a>
+        <a class="btn btn--primary btn--lg" href="https://github.com/Ashish-CodeJourney/Present/releases/latest"><span><small>Download for</small>Android</span></a>
+        <a class="btn btn--ghost btn--lg" href="https://github.com/Ashish-CodeJourney/Present"><span><small>Read the code on</small>GitHub</span></a>
       </div>
     </div>
   </div>
@@ -880,10 +923,34 @@
 </main>
 
 <footer class="footer">
-  <div class="container footer__inner">
-    <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Present</span></a>
-    <p>Present is open source under the <a href="https://github.com/Ashish-CodeJourney/Present/blob/main/LICENSE">MIT licence</a>.</p>
-    <p><a href="https://github.com/Ashish-CodeJourney/Present">GitHub</a> · <a href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Releases</a> · <a href="#research">Sources</a></p>
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Present</span></a>
+        <p>Keep the people. Lose the feed.</p>
+        <p class="footer__fine">Open source under the <a href="https://github.com/Ashish-CodeJourney/Present/blob/main/LICENSE">MIT licence</a>.</p>
+      </div>
+      <nav class="footer__col" aria-label="Download">
+        <h3>Download</h3>
+        <a href="https://github.com/Ashish-CodeJourney/Present/releases/latest">Android app</a>
+        <a href="https://github.com/Ashish-CodeJourney/Present/tree/main/extension">Chrome extension</a>
+        <a href="https://github.com/Ashish-CodeJourney/Present/releases">All releases</a>
+      </nav>
+      <nav class="footer__col" aria-label="Explore">
+        <h3>Explore</h3>
+        <a href="#calculator">Your number</a>
+        <a href="#how">How it works</a>
+        <a href="#screens">Inside the app</a>
+        <a href="#guard">Turn-off guard</a>
+        <a href="#privacy">Privacy</a>
+      </nav>
+      <nav class="footer__col" aria-label="Project">
+        <h3>Project</h3>
+        <a href="https://github.com/Ashish-CodeJourney/Present">GitHub</a>
+        <a href="#research">Research and sources</a>
+        <a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
   </div>
 </footer>
 </body>
